@@ -116,9 +116,6 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       require('child_process').spawn = mySpawn;
       mySpawn.setDefault(mySpawn.simple(0 /* exit code */, 'current-local-branch' /* stdout */));
 
-      // Make all other shell commands succeed
-      shellCommand.returns(Promise.resolve(0))
-
       // @ts-ignore
       const subScript = sandbox.stub(SonarScript.prototype, 'invokeScript');
 
