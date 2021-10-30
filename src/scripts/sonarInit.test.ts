@@ -115,15 +115,13 @@ error: Script "sonar-init" failed after 0 s with: ENOENT: no such file or direct
 
       assert.isTrue(nock.isDone(), `There are remaining expected HTTP calls: ${nock.pendingMocks().toString()}`);
 
-      expect(loggerRecorder.recordedLogs).to.satisfy(
-        (logs: string) => logs.startsWith(`info: Script "sonar-init" starting...
-info: Initializing 'my-test-project-key' Sonar project...`
-        ));
-      expect(loggerRecorder.recordedLogs).to.contain(
-        "warn: 'my-test-project-key' Sonar project already exists at https://example.com/sonar/dashboard?id=my-test-project-key ! Skipping sonar initialization...");
+      expect(loggerRecorder.recordedLogs)
+      .to.startWith('info: Script "sonar-init" starting...\n')
+      .and.to.contain("info: Initializing 'my-test-project-key' Sonar project...\n")
+      .and.to.contain("warn: 'my-test-project-key' Sonar project already exists at https://example.com/sonar/dashboard?id=my-test-project-key ! Skipping sonar initialization...\n")
+      .and.to.endWith("info: Script \"sonar-init\" successful after 0 s\n");
 
       // @ts-ignore
-      // tslint:disable-next-line:no-unused-expression
       shellCommand.should.not.have.been.called;
     });
 
