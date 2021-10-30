@@ -10,6 +10,11 @@ import { setTestingConfigs, timeout } from '../utils/testingUtils';
 import { SonarInitScript } from './sonarInit';
 import * as sinon from 'sinon';
 import * as fs from 'fs-extra';
+import {
+  LoggerRecorder,
+  simulateSonarProjectAlreadyExists,
+  simulateSonarProjectDoesNotYetExist
+} from '../utils/sonarTestUtils';
 
 const nock = require('nock');
 
@@ -30,42 +35,6 @@ function getSonarInitScript(logger: {}): SonarInitScript {
     ddash: sinon.stub() as any,
     logger: logger as any
   });
-}
-
-class LoggerRecorder {
-  logger: {};
-  recordedLogs: string;
-
-  constructor() {
-    this.recordedLogs = '';
-    // tslint:disable-next-line:no-this-assignment
-    const that = this;
-    this.logger = new Proxy(
-      {},
-      {
-        get: (target, prop) => {
-          // tslint:disable-next-line: only-arrow-functions
-          return function () {
-            that.recordedLogs += `${prop.toString()}: ${arguments[0]}\n`;
-          };
-        }
-      }
-    );
-  }
-}
-
-function simulateSonarProjectDoesNotYetExist() {
-  nock('https://example.com')
-  .get('/sonar/api/project_branches/list')
-  .query({project: 'my-test-project-key'})
-  .reply(404);
-}
-
-function simulateSonarProjectAlreadyExists() {
-  nock('https://example.com')
-  .get('/sonar/api/project_branches/list')
-  .query({project: 'my-test-project-key'})
-  .reply(200);
 }
 
 describe('sonar-init script', function () {
