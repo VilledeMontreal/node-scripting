@@ -37,7 +37,6 @@ export class SonarScript extends SonarBaseScript<Options> {
       await this.invokeScript(SonarInitScript, {}, {});
     }
 
-    this.logger.info(`Analyzing current branch source code...`);
     // npx sonar-scanner -Dsonar.branch.name=`git branch --show-current` -Dsonar.branch.target=develop
 
     // TODO Geraud : extract method to determine current git branch
@@ -47,6 +46,8 @@ export class SonarScript extends SonarBaseScript<Options> {
         currentBranch = stdoutOutput.trim();
       }
     });
+
+    this.logger.info(`Analyzing current branch "${currentBranch}" source code...`);
 
     const args = [`-Dsonar.branch.name=${currentBranch}`];
     if (this.options.targetBranch) {

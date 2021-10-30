@@ -16,6 +16,7 @@ const chai = require('chai');
 chai.should();
 chai.use(require('chai-as-promised'));
 chai.use(require("sinon-chai"));
+chai.use(require("chai-string"));
 
 const sandbox = sinon.createSandbox();
 // @ts-ignore
@@ -125,22 +126,14 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
 
       await sonarScript.run();
 
-      expect(loggerRecorder.recordedLogs).to.contain(
-        "info: Analyzing current branch source code...");
-      expect(loggerRecorder.recordedLogs).to.contain(
-        'info: Script "sonar" successful after 0 s');
+      expect(loggerRecorder.recordedLogs)
+      .to.startsWith('info: Script "sonar" starting...\n')
+      .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
+      .and.to.endWith('info: Script "sonar" successful after 0 s\n');
 
-      // TODO Geraud : improve assertion on logged messages
-      // console.log("************************");
-      // console.log(loggerRecorder.recordedLogs);
-      // console.log("************************");
-
-      // sonar-init script should not have been called
-      // @ts-ignore
       // tslint:disable-next-line:no-unused-expression
       subScript.should.not.have.been.called;
 
-      // @ts-ignore
       // tslint:disable-next-line:no-unused-expression
       shellCommand.should.have.been.calledTwice;
       shellCommand.should.have.been.calledWith('git', ['branch', '--show-current']);
