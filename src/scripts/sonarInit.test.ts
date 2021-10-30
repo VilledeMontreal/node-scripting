@@ -146,7 +146,6 @@ error: Script "sonar-init" failed after 0 s with: ENOENT: no such file or direct
 
       expect(loggerRecorder.recordedLogs).to.not.contain("warn");
 
-      // @ts-ignore
       shellCommand.should.have.been.calledTwice;
       shellCommand.should.have.been.calledWithExactly('./node_modules/.bin/sonar-scanner', []);
       shellCommand.should.have.been.calledWithExactly('./node_modules/.bin/sonar-scanner', ['-Dsonar.branch.name=develop']);
