@@ -118,11 +118,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       simulateSonarProjectAlreadyExists();
 
       // Make git call succeed and write "current-local-branch" to stdout
-      shellCommand.withArgs('git', ['branch', '--show-current'], sinon.match.any).callThrough();
-      const mockSpawn = require('mock-spawn');
-      const mySpawn = mockSpawn();
-      require('child_process').spawn = mySpawn;
-      mySpawn.setDefault(mySpawn.simple(0 /* exit code */, 'current-local-branch' /* stdout */));
+      simulateCurrentGitLocalBranchIs('current-local-branch');
 
       const loggerRecorder = new LoggerRecorder();
       const sonarScript = getSonarScript('develop', loggerRecorder.logger);
