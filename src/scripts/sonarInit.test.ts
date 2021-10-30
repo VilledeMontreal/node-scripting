@@ -2,6 +2,7 @@
 // Disabling some linting rules is OK in test files.
 // tslint:disable:no-console
 // tslint:disable:max-func-body-length
+// tslint:disable:no-unused-expression
 // ==========================================
 import { describe, it } from 'mocha';
 import { assert, expect } from 'chai';
@@ -16,6 +17,7 @@ const chai = require('chai');
 chai.should();
 chai.use(require('chai-as-promised'));
 chai.use(require("sinon-chai"));
+chai.use(require("chai-string"));
 
 const sandbox = sinon.createSandbox();
 
@@ -138,16 +140,15 @@ info: Initializing 'my-test-project-key' Sonar project...`
 
       assert.isTrue(nock.isDone(), `There are remaining expected HTTP calls: ${nock.pendingMocks().toString()}`);
 
-      // Expected action is to initialize a new Sonar project
-      expect(loggerRecorder.recordedLogs).to.satisfy(
-        (logs: string) => logs.startsWith(`info: Script "sonar-init" starting...
-info: Initializing 'my-test-project-key' Sonar project...`
-        ));
-      expect(loggerRecorder.recordedLogs).to.contain("info: 'my-test-project-key' Sonar project successfully initialized, and available at https://example.com/sonar/dashboard?id=my-test-project-key")
+      expect(loggerRecorder.recordedLogs)
+      .to.startWith('info: Script "sonar-init" starting...\n')
+      .and.to.contain("info: Initializing 'my-test-project-key' Sonar project...\n")
+      .and.to.contain("info: 'my-test-project-key' Sonar project successfully initialized, and available at https://example.com/sonar/dashboard?id=my-test-project-key\n")
+      .and.to.endWith('info: Script "sonar-init" successful after 0 s\n');
+
       expect(loggerRecorder.recordedLogs).to.not.contain("warn");
 
       // @ts-ignore
-      // tslint:disable-next-line:no-unused-expression
       shellCommand.should.have.been.calledTwice;
       shellCommand.should.have.been.calledWithExactly('./node_modules/.bin/sonar-scanner', []);
       shellCommand.should.have.been.calledWithExactly('./node_modules/.bin/sonar-scanner', ['-Dsonar.branch.name=develop']);
