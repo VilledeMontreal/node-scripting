@@ -18,6 +18,10 @@ chai.use(require('chai-as-promised'));
 chai.use(require("sinon-chai"));
 
 const sandbox = sinon.createSandbox();
+// @ts-ignore
+const shellCommand = sandbox.stub(SonarScript.prototype, 'invokeShellCommand');
+// @ts-ignore
+const subScript = sandbox.stub(SonarScript.prototype, 'invokeScript');
 
 function getSonarScript(targetBranch: string, logger: {}): SonarScript {
   return new SonarScript({
@@ -75,6 +79,15 @@ describe('sonar script', function () {
     setTestingConfigs();
   });
 
+  afterEach(() => {
+    sandbox.resetHistory();
+    sandbox.resetBehavior();
+  })
+
+  after(() => {
+    sandbox.restore();
+  })
+
   it(` should fail when sonar-project.properties is missing`, async () => {
     const loggerRecorder = new LoggerRecorder();
     const sonarScript = getSonarScript(null, loggerRecorder.logger);
@@ -98,16 +111,11 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
     });
 
     afterEach(() => {
-      sandbox.restore();
       nock.cleanAll();
     });
 
     it(` should successfully analyze code when project already exists in Sonar.`, async () => {
       simulateSonarProjectAlreadyExists();
-
-      // Mock all invoked shell commands
-      // @ts-ignore
-      const shellCommand = sandbox.stub(SonarScript.prototype, 'invokeShellCommand');
 
       // Make git call succeed and write "current-local-branch" to stdout
       shellCommand.withArgs('git', ['branch', '--show-current'], sinon.match.any).callThrough();
@@ -115,9 +123,6 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       const mySpawn = mockSpawn();
       require('child_process').spawn = mySpawn;
       mySpawn.setDefault(mySpawn.simple(0 /* exit code */, 'current-local-branch' /* stdout */));
-
-      // @ts-ignore
-      const subScript = sandbox.stub(SonarScript.prototype, 'invokeScript');
 
       const loggerRecorder = new LoggerRecorder();
       const sonarScript = getSonarScript('develop', loggerRecorder.logger);
