@@ -29,11 +29,9 @@ export class SonarScript extends SonarBaseScript<Options> {
 
   protected async main() {
     const {sonarHostUrl, sonarProjectKey} = this.getSonarProjectInformation();
-    //
-    // this.logScriptStart(sonarProjectKey);
 
     if (! await this.sonarProjectAlreadyExists(sonarProjectKey, sonarHostUrl)) {
-      // TODO Geraud : log a warning message
+      this.logger.warn(`'${sonarProjectKey}' Sonar project does not yet exist on ${sonarHostUrl} ! Initializing it first...`);
       await this.invokeScript(SonarInitScript, {}, {});
     }
 
