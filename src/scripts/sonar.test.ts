@@ -2,6 +2,7 @@
 // Disabling some linting rules is OK in test files.
 // tslint:disable:no-console
 // tslint:disable:max-func-body-length
+// tslint:disable:no-unused-expression
 // ==========================================
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
@@ -73,6 +74,14 @@ function simulateSonarProjectAlreadyExists() {
   .reply(200);
 }
 
+function simulateCurrentGitLocalBranchIs(currentLocalBranch: string) {
+  shellCommand.withArgs('git', ['branch', '--show-current'], sinon.match.any).callThrough();
+  const mockSpawn = require('mock-spawn');
+  const mySpawn = mockSpawn();
+  require('child_process').spawn = mySpawn;
+  mySpawn.setDefault(mySpawn.simple(0 /* exit code */, currentLocalBranch /* stdout */));
+}
+
 describe('sonar script', function () {
   timeout(this, 30000);
 
@@ -117,8 +126,6 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
 
     it(` should successfully analyze code when project already exists in Sonar.`, async () => {
       simulateSonarProjectAlreadyExists();
-
-      // Make git call succeed and write "current-local-branch" to stdout
       simulateCurrentGitLocalBranchIs('current-local-branch');
 
       const loggerRecorder = new LoggerRecorder();
@@ -131,10 +138,8 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
       .and.to.endWith('info: Script "sonar" successful after 0 s\n');
 
-      // tslint:disable-next-line:no-unused-expression
       subScript.should.not.have.been.called;
 
-      // tslint:disable-next-line:no-unused-expression
       shellCommand.should.have.been.calledTwice;
       shellCommand.should.have.been.calledWith('git', ['branch', '--show-current']);
       shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, ['-Dsonar.branch.name=current-local-branch', '-Dsonar.branch.target=develop']);
