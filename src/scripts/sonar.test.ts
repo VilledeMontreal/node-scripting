@@ -52,6 +52,15 @@ function simulateCurrentGitLocalBranchIs(currentLocalBranch: string) {
   mySpawn.setDefault(mySpawn.simple(0 /* exit code */, currentLocalBranch /* stdout */));
 }
 
+function simulateThereIsNoLocalGitRepository() {
+  shellCommand.withArgs('git', ['branch', '--show-current'], sinon.match.any).callThrough();
+  const mockSpawn = require('mock-spawn');
+  const mySpawn = mockSpawn();
+  require('child_process').spawn = mySpawn;
+  const gitOutputMessage = 'fatal: not a git repository (or any of the parent directories): .git';
+  mySpawn.setDefault(mySpawn.simple(128 /* exit code */, gitOutputMessage /* stdout */));
+}
+
 describe('sonar script', function () {
   timeout(this, 30000);
 
@@ -92,6 +101,28 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
 
     afterEach(() => {
       nock.cleanAll();
+    });
+
+    it(` should fail when there is no local git repository`, async () => {
+      simulateSonarProjectAlreadyExists();
+      simulateThereIsNoLocalGitRepository();
+
+      const loggerRecorder = new LoggerRecorder();
+      const sonarScript = getSonarScript(null, loggerRecorder.logger);
+
+      await expect(sonarScript.run()).to.be.rejectedWith(
+        Error,
+        'Expected success codes were "0", but the process exited with "128".'
+      );
+
+      expect(loggerRecorder.recordedLogs)
+      .to.startWith(`info: Script "sonar" starting...\n`)
+      .and.to.contain('info: Executing: git branch,--show-current\n')
+      .and.to.endWith('error: Script "sonar" failed after 0 s with: Expected success codes were "0", but the process exited with "128".\n');
+
+      subScript.should.not.have.been.called;
+
+      shellCommand.should.have.been.calledOnceWith('git', ['branch', '--show-current']);
     });
 
     it(` should successfully analyze code when project already exists in Sonar.`, async () => {
