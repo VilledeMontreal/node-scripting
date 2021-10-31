@@ -139,6 +139,8 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
         const loggerRecorder = new LoggerRecorder();
         const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
+        shellCommand.withArgs(SONAR_SCANNER).returns(0);
+
         await sonarScript.run();
 
         expect(loggerRecorder.recordedLogs)
@@ -156,6 +158,8 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       it(` should succeed when code analysis against a target branch succeeds.`, async () => {
         const loggerRecorder = new LoggerRecorder();
         const sonarScript = getSonarScript('develop', loggerRecorder.logger);
+
+        shellCommand.withArgs(SONAR_SCANNER).returns(0);
 
         await sonarScript.run();
 
@@ -205,6 +209,8 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
         const loggerRecorder = new LoggerRecorder();
         const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
+        shellCommand.withArgs(SONAR_SCANNER).returns(0);
+
         await sonarScript.run();
 
         expect(loggerRecorder.recordedLogs)
@@ -225,6 +231,8 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       it(` should initialize Sonar project with a warning and then successfully analyze code against a target branch.`, async () => {
         const loggerRecorder = new LoggerRecorder();
         const sonarScript = getSonarScript('develop', loggerRecorder.logger);
+
+        shellCommand.withArgs(SONAR_SCANNER).returns(0);
 
         await sonarScript.run();
 
