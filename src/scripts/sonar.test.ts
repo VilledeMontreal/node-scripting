@@ -295,11 +295,6 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       });
     });
 
-    // TODO Geraud : add more test cases:
-    //               - when git branch fails
-    //               - when passing no target branch
-    //               - when sonar project does not yet exists
-
   });
 
 });
