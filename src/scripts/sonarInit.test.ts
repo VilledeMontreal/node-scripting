@@ -15,6 +15,7 @@ import {
   simulateSonarProjectAlreadyExists,
   simulateSonarProjectDoesNotYetExist
 } from '../utils/sonarTestUtils';
+import { SONAR_SCANNER } from './sonar';
 
 const nock = require('nock');
 
@@ -116,8 +117,35 @@ error: Script "sonar-init" failed after 0 s with: ENOENT: no such file or direct
       expect(loggerRecorder.recordedLogs).to.not.contain("warn");
 
       shellCommand.should.have.been.calledTwice;
-      shellCommand.should.have.been.calledWithExactly('./node_modules/.bin/sonar-scanner', []);
-      shellCommand.should.have.been.calledWithExactly('./node_modules/.bin/sonar-scanner', ['-Dsonar.branch.name=develop']);
+      shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, []);
+      shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, ['-Dsonar.branch.name=develop']);
+    });
+
+    it(` should fail when sonar project initialization fails.`, async () => {
+      simulateSonarProjectDoesNotYetExist();
+
+      // @ts-ignore
+      const shellCommand = sandbox.stub(SonarInitScript.prototype, 'invokeShellCommand');
+      shellCommand.withArgs(SONAR_SCANNER).rejects(new Error('An error occured while analyzing code.'));
+
+      const loggerRecorder = new LoggerRecorder();
+      const sonarInitScript = getSonarInitScript(loggerRecorder.logger);
+
+      await expect(sonarInitScript.run()).to.be.rejectedWith(
+        Error,
+        'An error occured while analyzing code.'
+      );
+
+      assert.isTrue(nock.isDone(), `There are remaining expected HTTP calls: ${nock.pendingMocks().toString()}`);
+
+      expect(loggerRecorder.recordedLogs)
+      .to.startWith('info: Script "sonar-init" starting...\n')
+      .and.to.contain("info: Initializing 'my-test-project-key' Sonar project...\n")
+      .and.to.endWith('error: Script "sonar-init" failed after 0 s with: An error occured while analyzing code.\n');
+
+      expect(loggerRecorder.recordedLogs).to.not.contain("warn");
+
+      shellCommand.should.have.been.calledOnceWithExactly(SONAR_SCANNER, []);
     });
   });
 
