@@ -104,7 +104,6 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
     });
 
     it(` should fail when there is no local git repository`, async () => {
-      simulateSonarProjectAlreadyExists();
       simulateThereIsNoLocalGitRepository();
 
       const loggerRecorder = new LoggerRecorder();
