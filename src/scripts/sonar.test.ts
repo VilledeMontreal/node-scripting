@@ -246,6 +246,28 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
         shellCommand.should.have.been.calledWith('git', ['branch', '--show-current']);
         shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, ['-Dsonar.branch.name=current-local-branch', '-Dsonar.branch.target=develop']);
       });
+
+      it(` should fail when Sonar project initialization fails.`, async () => {
+        const loggerRecorder = new LoggerRecorder();
+        const sonarScript = getSonarScript(null, loggerRecorder.logger);
+
+        subScript.withArgs(SonarInitScript).rejects(new Error('An error occurred while calling sonar-init sub-script.'))
+
+        await expect(sonarScript.run()).to.be.rejectedWith(
+          Error,
+          'An error occurred while calling sonar-init sub-script.'
+        );
+
+        expect(loggerRecorder.recordedLogs)
+        .to.startsWith('info: Script "sonar" starting...\n')
+        .and.to.contain("warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n")
+        .and.to.endWith('error: Script "sonar" failed after 0 s with: An error occurred while calling sonar-init sub-script.\n')
+        .and.to.not.contain('info: Analyzing current branch "current-local-branch" source code...\n')
+
+        subScript.should.have.been.calledOnceWithExactly(SonarInitScript, {}, {});
+
+        shellCommand.should.have.been.calledOnceWith('git', ['branch', '--show-current']);
+      });
     });
 
     // TODO Geraud : add more test cases:
