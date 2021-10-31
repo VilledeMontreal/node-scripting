@@ -170,6 +170,29 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
         shellCommand.should.have.been.calledWith('git', ['branch', '--show-current']);
         shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, ['-Dsonar.branch.name=current-local-branch', '-Dsonar.branch.target=develop']);
       });
+
+      it(` should fail when simple code analysis fails.`, async () => {
+        const loggerRecorder = new LoggerRecorder();
+        const sonarScript = getSonarScript(null, loggerRecorder.logger);
+
+        shellCommand.withArgs(SONAR_SCANNER).rejects(new Error(`An error occurred while calling ${SONAR_SCANNER}.`))
+
+        await expect(sonarScript.run()).to.be.rejectedWith(
+          Error,
+          `An error occurred while calling ${SONAR_SCANNER}.`
+        );
+
+        expect(loggerRecorder.recordedLogs)
+        .to.startsWith('info: Script "sonar" starting...\n')
+        .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
+        .and.to.endWith(`error: Script "sonar" failed after 0 s with: An error occurred while calling ${SONAR_SCANNER}.\n`);
+
+        subScript.should.not.have.been.called;
+
+        shellCommand.should.have.been.calledTwice;
+        shellCommand.should.have.been.calledWith('git', ['branch', '--show-current']);
+        shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, ['-Dsonar.branch.name=current-local-branch']);
+      });
     });
 
     describe(' when project already exists in Sonar', () => {
