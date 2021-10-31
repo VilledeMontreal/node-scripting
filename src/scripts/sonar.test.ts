@@ -268,6 +268,31 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
 
         shellCommand.should.have.been.calledOnceWith('git', ['branch', '--show-current']);
       });
+
+      it(` should fail when code analysis fails after project initialization.`, async () => {
+        const loggerRecorder = new LoggerRecorder();
+        const sonarScript = getSonarScript(null, loggerRecorder.logger);
+
+        subScript.withArgs(SonarInitScript).returns(0);
+        shellCommand.withArgs(SONAR_SCANNER).rejects(new Error('An error occurred while analyzing source code.'));
+
+        await expect(sonarScript.run()).to.be.rejectedWith(
+          Error,
+          'An error occurred while analyzing source code.'
+        );
+
+        expect(loggerRecorder.recordedLogs)
+        .to.startsWith('info: Script "sonar" starting...\n')
+        .and.to.contain("warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n")
+        .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
+        .and.to.endWith('error: Script "sonar" failed after 0 s with: An error occurred while analyzing source code.\n')
+
+        subScript.should.have.been.calledOnceWithExactly(SonarInitScript, {}, {});
+
+        shellCommand.should.have.been.calledTwice;
+        shellCommand.should.have.been.calledWith('git', ['branch', '--show-current']);
+        shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, ['-Dsonar.branch.name=current-local-branch']);
+      });
     });
 
     // TODO Geraud : add more test cases:
