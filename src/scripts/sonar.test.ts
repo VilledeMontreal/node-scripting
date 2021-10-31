@@ -179,17 +179,17 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
         const loggerRecorder = new LoggerRecorder();
         const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
-        shellCommand.withArgs(SONAR_SCANNER).rejects(new Error(`An error occurred while calling ${SONAR_SCANNER}.`))
+        shellCommand.withArgs(SONAR_SCANNER).rejects(new Error('An error occurred while analyzing source code.'))
 
         await expect(sonarScript.run()).to.be.rejectedWith(
           Error,
-          `An error occurred while calling ${SONAR_SCANNER}.`
+          'An error occurred while analyzing source code.'
         );
 
         expect(loggerRecorder.recordedLogs)
         .to.startsWith('info: Script "sonar" starting...\n')
         .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
-        .and.to.endWith(`error: Script "sonar" failed after 0 s with: An error occurred while calling ${SONAR_SCANNER}.\n`);
+        .and.to.endWith(`error: Script "sonar" failed after 0 s with: An error occurred while analyzing source code.\n`);
 
         subScript.should.not.have.been.called;
 
