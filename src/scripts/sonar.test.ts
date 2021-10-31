@@ -199,7 +199,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       });
     });
 
-    describe(' when project already exists in Sonar', () => {
+    describe(' when project does not yet exist in Sonar', () => {
       beforeEach(() => {
         simulateSonarProjectDoesNotYetExist();
         simulateCurrentGitLocalBranchIs('current-local-branch');
