@@ -32,11 +32,16 @@ const shellCommand = sandbox.stub(SonarScript.prototype, 'invokeShellCommand');
 const subScript = sandbox.stub(SonarScript.prototype, 'invokeScript');
 
 function getSonarScript(targetBranch: string, logger: {}): SonarScript {
+  let options = {};
+  if (targetBranch) {
+    options = {
+      targetBranch
+    };
+  }
+
   return new SonarScript({
     args: {},
-    options: {
-      targetBranch
-    },
+    options,
     program: sinon.stub() as any,
     command: sinon.stub() as any,
     ddash: sinon.stub() as any,
@@ -124,25 +129,47 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       shellCommand.should.have.been.calledOnceWith('git', ['branch', '--show-current']);
     });
 
-    it(` should successfully analyze code when project already exists in Sonar.`, async () => {
-      simulateSonarProjectAlreadyExists();
-      simulateCurrentGitLocalBranchIs('current-local-branch');
+    describe(' when project already exists in Sonar', () => {
+      beforeEach(() => {
+        simulateCurrentGitLocalBranchIs('current-local-branch');
+        simulateSonarProjectAlreadyExists();
+      });
 
-      const loggerRecorder = new LoggerRecorder();
-      const sonarScript = getSonarScript('develop', loggerRecorder.logger);
+      it(` should succeed when simple code analysis succeeds.`, async () => {
+        const loggerRecorder = new LoggerRecorder();
+        const sonarScript = getSonarScript(undefined, loggerRecorder.logger);
 
-      await sonarScript.run();
+        await sonarScript.run();
 
-      expect(loggerRecorder.recordedLogs)
-      .to.startsWith('info: Script "sonar" starting...\n')
-      .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
-      .and.to.endWith('info: Script "sonar" successful after 0 s\n');
+        expect(loggerRecorder.recordedLogs)
+        .to.startsWith('info: Script "sonar" starting...\n')
+        .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
+        .and.to.endWith('info: Script "sonar" successful after 0 s\n');
 
-      subScript.should.not.have.been.called;
+        subScript.should.not.have.been.called;
 
-      shellCommand.should.have.been.calledTwice;
-      shellCommand.should.have.been.calledWith('git', ['branch', '--show-current']);
-      shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, ['-Dsonar.branch.name=current-local-branch', '-Dsonar.branch.target=develop']);
+        shellCommand.should.have.been.calledTwice;
+        shellCommand.should.have.been.calledWith('git', ['branch', '--show-current']);
+        shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, ['-Dsonar.branch.name=current-local-branch']);
+      });
+
+      it(` should succeed when code analysis against a target branch succeeds.`, async () => {
+        const loggerRecorder = new LoggerRecorder();
+        const sonarScript = getSonarScript('develop', loggerRecorder.logger);
+
+        await sonarScript.run();
+
+        expect(loggerRecorder.recordedLogs)
+        .to.startsWith('info: Script "sonar" starting...\n')
+        .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
+        .and.to.endWith('info: Script "sonar" successful after 0 s\n');
+
+        subScript.should.not.have.been.called;
+
+        shellCommand.should.have.been.calledTwice;
+        shellCommand.should.have.been.calledWith('git', ['branch', '--show-current']);
+        shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, ['-Dsonar.branch.name=current-local-branch', '-Dsonar.branch.target=develop']);
+      });
     });
 
     it(` should initialize Sonar project with a warning and then successfully analyze code when project does not yet exist in Sonar.`, async () => {
