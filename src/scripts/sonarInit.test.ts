@@ -13,7 +13,7 @@ import * as fs from 'fs-extra';
 import {
   LoggerRecorder,
   simulateSonarProjectAlreadyExists,
-  simulateSonarProjectDoesNotYetExist
+  simulateSonarProjectDoesNotYetExist, simulateSonarServerIsNotFound
 } from '../utils/sonarTestUtils';
 import { SONAR_SCANNER } from './sonar';
 
@@ -146,6 +146,33 @@ error: Script "sonar-init" failed after 0 s with: ENOENT: no such file or direct
       expect(loggerRecorder.recordedLogs).to.not.contain("warn");
 
       shellCommand.should.have.been.calledOnceWithExactly(SONAR_SCANNER, []);
+    });
+
+    it(` should fail when sonar server is not found.`, async () => {
+      simulateSonarServerIsNotFound();
+
+      // @ts-ignore
+      const shellCommand = sandbox.spy(SonarInitScript.prototype, 'invokeShellCommand');
+
+      const loggerRecorder = new LoggerRecorder();
+      const sonarInitScript = getSonarInitScript(loggerRecorder.logger);
+
+      await expect(sonarInitScript.run()).to.be.rejectedWith(
+        Error,
+        'Not Found'
+      );
+
+      assert.isTrue(nock.isDone(), `There are remaining expected HTTP calls: ${nock.pendingMocks().toString()}`);
+
+      expect(loggerRecorder.recordedLogs)
+      .to.startWith('info: Script "sonar-init" starting...\n')
+      .and.to.contain("info: Initializing 'my-test-project-key' Sonar project...\n")
+      .and.to.contain('error: "https://example.com/sonar/" Sonar server is not reachable.')
+      .and.to.endWith('error: Script "sonar-init" failed after 0 s with: Not Found\n');
+
+      expect(loggerRecorder.recordedLogs).to.not.contain("warn");
+
+      shellCommand.should.not.have.been.called;
     });
   });
 

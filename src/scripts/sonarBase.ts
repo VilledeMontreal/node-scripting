@@ -1,6 +1,7 @@
 import { ScriptBase } from '../scriptBase';
 import * as request from 'superagent';
 import { URL } from 'url';
+import * as path from 'path';
 
 const properties = require('java-properties');
 
@@ -20,7 +21,16 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
 
     try {
       res = await request
-      .get(new URL('api/project_branches/list', sonarHostUrl).toString())
+      .head(new URL(sonarHostUrl).toString())
+      .timeout(5000);
+    } catch (err) {
+      this.logger.error(`"${sonarHostUrl}" Sonar server is not reachable.`);
+      throw err;
+    }
+
+    try {
+      res = await request
+      .get(this.getBranchesListSonarEndpointUrl(sonarHostUrl))
       .query({project: sonarProjectKey})
       .timeout(5000);
     } catch (err) {
@@ -42,6 +52,12 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
     }
 
     throw {msg: 'Unexpected response from Sonar API!', response: res};
+  }
+
+  private getBranchesListSonarEndpointUrl(sonarHostUrl: string) {
+    const endpointUrl = new URL(sonarHostUrl);
+    endpointUrl.pathname = path.join(endpointUrl.pathname, 'api/project_branches/list');
+    return endpointUrl.toString();
   }
 
   protected getSonarProjectInformation(): SonarProjectInformation {

@@ -1,6 +1,19 @@
 const nock = require('nock');
 
+export function simulateSonarServerIsNotFound() {
+  nock('https://example.com')
+  .head('/sonar/')
+  .reply(404);
+}
+
+function simulateSonarServerIsOk() {
+  nock('https://example.com')
+  .head('/sonar/')
+  .reply(200);
+}
+
 export function simulateSonarProjectDoesNotYetExist() {
+  simulateSonarServerIsOk();
   nock('https://example.com')
   .get('/sonar/api/project_branches/list')
   .query({project: 'my-test-project-key'})
@@ -8,6 +21,7 @@ export function simulateSonarProjectDoesNotYetExist() {
 }
 
 export function simulateSonarProjectAlreadyExists() {
+  simulateSonarServerIsOk();
   nock('https://example.com')
   .get('/sonar/api/project_branches/list')
   .query({project: 'my-test-project-key'})
