@@ -5,7 +5,7 @@
 // tslint:disable:no-unused-expression
 // ==========================================
 import { describe, it } from 'mocha';
-import { expect } from 'chai';
+import { assert, expect } from 'chai';
 import { setTestingConfigs, timeout } from '../utils/testingUtils';
 import { SONAR_SCANNER, SonarScript } from './sonar';
 import * as sinon from 'sinon';
@@ -14,7 +14,7 @@ import { SonarInitScript } from './sonarInit';
 import {
   LoggerRecorder,
   simulateSonarProjectAlreadyExists,
-  simulateSonarProjectDoesNotYetExist
+  simulateSonarProjectDoesNotYetExist, simulateSonarServerIsNotFound
 } from '../utils/sonarTestUtils';
 
 const nock = require('nock');
@@ -125,6 +125,30 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       .and.to.endWith('error: Script "sonar" failed after 0 s with: Expected success codes were "0", but the process exited with "128".\n');
 
       subScript.should.not.have.been.called;
+
+      shellCommand.should.have.been.calledOnceWith('git', ['branch', '--show-current']);
+    });
+
+    it(` should fail when sonar server is not found.`, async () => {
+      simulateCurrentGitLocalBranchIs('current-local-branch');
+      simulateSonarServerIsNotFound();
+
+      const loggerRecorder = new LoggerRecorder();
+      const sonarInitScript = getSonarScript(null, loggerRecorder.logger);
+
+      await expect(sonarInitScript.run()).to.be.rejectedWith(
+        Error,
+        'Not Found'
+      );
+
+      assert.isTrue(nock.isDone(), `There are remaining expected HTTP calls: ${nock.pendingMocks().toString()}`);
+
+      expect(loggerRecorder.recordedLogs)
+      .to.startWith('info: Script "sonar" starting...\n')
+      .and.to.contain('error: "https://example.com/sonar/" Sonar server is not reachable.')
+      .and.to.endWith('error: Script "sonar" failed after 0 s with: Not Found\n');
+
+      expect(loggerRecorder.recordedLogs).to.not.contain("warn");
 
       shellCommand.should.have.been.calledOnceWith('git', ['branch', '--show-current']);
     });
