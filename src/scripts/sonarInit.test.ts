@@ -43,7 +43,7 @@ const validPropertyFiles = [
   // './src/utils/test-sonar-project_url-without-trailing-slash.properties'
 ];
 
-describe.only('sonar-init script', function () {
+describe('sonar-init script', function () {
   timeout(this, 30000);
 
   before(() => {
