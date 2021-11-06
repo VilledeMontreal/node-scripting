@@ -65,7 +65,7 @@ error: Script "sonar-init" failed after 0 s with: ENOENT: no such file or direct
   });
 
   validPropertyFiles.forEach(propertyFile => {
-    describe(` with valid ${propertyFile} file`, async () => {
+    describe(` when using "${propertyFile}" valid file`, async () => {
       before(async () => {
         await fs.copyFile(propertyFile, './sonar-project.properties');
       });
