@@ -318,7 +318,6 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
         shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, ['-Dsonar.branch.name=current-local-branch']);
       });
     });
-
   });
 
   describe(' when using a sonar-project.properties file where Sonar host is missing', async () => {
@@ -338,7 +337,24 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       subScript.should.not.have.been.called;
       shellCommand.should.not.have.been.called;
     });
-
   });
 
+  describe(' when using a sonar-project.properties file where Sonar project key is missing', async () => {
+    before(async () => {
+      await fs.copyFile('./src/utils/test-sonar-project-missing-project-key.properties', './sonar-project.properties');
+    });
+    after(async () => {
+      await fs.unlink('./sonar-project.properties');
+    });
+
+    it(` should fail with an appropriate message.`, async () => {
+      const loggerRecorder = new LoggerRecorder();
+      const sonarScript = getSonarScript(null, loggerRecorder.logger);
+
+      expect(sonarScript.run()).to.be.rejectedWith(Error, '"sonar.projectKey" property must be defined in "sonar-project.properties" file!');
+
+      subScript.should.not.have.been.called;
+      shellCommand.should.not.have.been.called;
+    });
+  });
 });
