@@ -96,7 +96,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
 `);
   });
 
-  describe(' with valid sonar-project.properties file', async () => {
+  describe(' when using a valid sonar-project.properties file', async () => {
     before(async () => {
       await fs.copyFile('./src/utils/test-sonar-project.properties', './sonar-project.properties');
     });
