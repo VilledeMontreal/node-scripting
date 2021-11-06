@@ -85,6 +85,7 @@ describe('sonar script', function() {
   afterEach(() => {
     sandbox.resetHistory();
     sandbox.resetBehavior();
+    nock.cleanAll();
   });
 
   after(() => {
@@ -112,10 +113,6 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       });
       after(async () => {
         await fs.unlink('./sonar-project.properties');
-      });
-
-      afterEach(() => {
-        nock.cleanAll();
       });
 
       it(` should fail when there is no local git repository`, async () => {
