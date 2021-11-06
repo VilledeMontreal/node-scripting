@@ -361,7 +361,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       await fs.unlink('./sonar-project.properties');
     });
 
-    it(` should fail with an appropriate message.`, async () => {
+    it(` should fail with a message about missing host url.`, async () => {
       const loggerRecorder = new LoggerRecorder();
       const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
@@ -383,7 +383,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       await fs.unlink('./sonar-project.properties');
     });
 
-    it(` should fail with an appropriate message.`, async () => {
+    it(` should fail with a message about missing project key.`, async () => {
       const loggerRecorder = new LoggerRecorder();
       const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
