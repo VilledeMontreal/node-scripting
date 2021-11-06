@@ -1,4 +1,3 @@
-import { Command } from '@caporal/core';
 import { URL } from 'url';
 import { SONAR_SCANNER } from './sonar';
 import { SonarBaseScript } from './sonarBase';
@@ -12,14 +11,6 @@ export class SonarInitScript extends SonarBaseScript<IGlobalOptions> {
 
   get description(): string {
     return 'Initializes Sonar project and creates "master" and "develop" long-lived sonar branches.';
-  }
-
-  protected async configure(command: Command): Promise<void> {
-    command.option(
-      `-e, --should-already-exist`,
-      `When this flag is enabled, sonar project is expected to already exist; its only effect is to change log
-       messages depending on caller expectations...`
-    );
   }
 
   protected async main() {
