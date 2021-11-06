@@ -30,13 +30,7 @@ export class SonarScript extends SonarBaseScript<Options> {
   protected async main() {
     const { sonarHostUrl, sonarProjectKey } = this.getSonarProjectInformation();
 
-    // TODO Geraud : extract method to determine current git branch
-    let currentBranch = '';
-    await this.invokeShellCommand('git', ['branch', '--show-current'], {
-      outputHandler: (stdoutOutput: string) => {
-        currentBranch = stdoutOutput.trim();
-      }
-    });
+    const currentBranch = await this.findCurrentGitLocalBranch();
 
     if (!(await this.sonarProjectAlreadyExists(sonarProjectKey, sonarHostUrl))) {
       this.logger.warn(
@@ -54,5 +48,15 @@ export class SonarScript extends SonarBaseScript<Options> {
       args.push(`-Dsonar.branch.target=${this.options.targetBranch}`);
     }
     await this.invokeShellCommand(SONAR_SCANNER, args);
+  }
+
+  private async findCurrentGitLocalBranch() {
+    let currentBranch: string;
+    await this.invokeShellCommand('git', ['branch', '--show-current'], {
+      outputHandler: (stdoutOutput: string) => {
+        currentBranch = stdoutOutput.trim();
+      }
+    });
+    return currentBranch;
   }
 }
