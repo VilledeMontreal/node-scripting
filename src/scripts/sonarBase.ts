@@ -33,7 +33,7 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
       res = await request
         .get(this.getBranchesListSonarEndpointUrl(sonarHostUrl))
         .query({ project: sonarProjectKey })
-        .timeout(5000);
+        .timeout(10000);
     } catch (err) {
       if (err.response?.notFound) {
         // 404 is the only http error we want to keep track of
