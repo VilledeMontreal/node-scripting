@@ -69,7 +69,7 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
       throw new Error(errorMessage);
     }
     if (!result.sonarProjectKey) {
-      const errorMessage = '"sonar.projectKey" property is not defined in "sonar-project.properties" file!';
+      const errorMessage = '"sonar.projectKey" property must be defined in "sonar-project.properties" file!';
       this.logger.error(errorMessage);
       throw new Error(errorMessage);
     }
