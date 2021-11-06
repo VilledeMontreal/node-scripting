@@ -26,10 +26,8 @@ chai.use(require("sinon-chai"));
 chai.use(require("chai-string"));
 
 const sandbox = sinon.createSandbox();
-// @ts-ignore
-const shellCommand = sandbox.stub(SonarScript.prototype, 'invokeShellCommand');
-// @ts-ignore
-const subScript = sandbox.stub(SonarScript.prototype, 'invokeScript');
+let shellCommand: sinon.SinonStub;
+let subScript: sinon.SinonStub;
 
 function getSonarScript(targetBranch: string, logger: {}): SonarScript {
   let options = {};
@@ -71,6 +69,11 @@ describe('sonar script', function () {
 
   before(() => {
     setTestingConfigs();
+
+    // @ts-ignore
+    shellCommand = sandbox.stub(SonarScript.prototype, 'invokeShellCommand');
+    // @ts-ignore
+    subScript = sandbox.stub(SonarScript.prototype, 'invokeScript');
   });
 
   afterEach(() => {
