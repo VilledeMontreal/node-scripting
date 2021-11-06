@@ -644,7 +644,10 @@ error: Script "sonar-init" failed after 0 s with: ENOENT: no such file or direct
     // and then use it to test 'sonar' and 'sonar-init' scripts.
     describe.skip(' with valid sonar-project.properties file', async () => {
       before(async () => {
-        await fs.copyFile('./src/utils/test-sonar-project_url-with-trailing-slash.properties', './sonar-project.properties');
+        await fs.copyFile(
+          './src/utils/test-sonar-project_url-with-trailing-slash.properties',
+          './sonar-project.properties'
+        );
       });
       after(async () => {
         await fs.unlink('./sonar-project.properties');

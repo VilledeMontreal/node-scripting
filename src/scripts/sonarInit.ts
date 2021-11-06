@@ -23,7 +23,7 @@ export class SonarInitScript extends SonarBaseScript<IGlobalOptions> {
   }
 
   protected async main() {
-    const {sonarHostUrl, sonarProjectKey} = this.getSonarProjectInformation();
+    const { sonarHostUrl, sonarProjectKey } = this.getSonarProjectInformation();
 
     this.logScriptStart(sonarProjectKey);
 

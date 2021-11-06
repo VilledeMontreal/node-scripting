@@ -6,12 +6,11 @@ import * as path from 'path';
 const properties = require('java-properties');
 
 export interface SonarProjectInformation {
-  sonarHostUrl: string,
-  sonarProjectKey: string
+  sonarHostUrl: string;
+  sonarProjectKey: string;
 }
 
 export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
-
   protected async sonarProjectAlreadyExists(sonarProjectKey: string, sonarHostUrl: string): Promise<boolean> {
     let res;
 
@@ -20,9 +19,7 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
     );
 
     try {
-      res = await request
-      .head(new URL(sonarHostUrl).toString())
-      .timeout(5000);
+      res = await request.head(new URL(sonarHostUrl).toString()).timeout(5000);
     } catch (err) {
       this.logger.error(`"${sonarHostUrl}" Sonar server is not reachable.`);
       throw err;
@@ -30,9 +27,9 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
 
     try {
       res = await request
-      .get(this.getBranchesListSonarEndpointUrl(sonarHostUrl))
-      .query({project: sonarProjectKey})
-      .timeout(5000);
+        .get(this.getBranchesListSonarEndpointUrl(sonarHostUrl))
+        .query({ project: sonarProjectKey })
+        .timeout(5000);
     } catch (err) {
       if (err.response?.notFound) {
         // 404 is the only http error we want to keep track of
@@ -42,7 +39,7 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
       }
     }
 
-    this.logger.debug('*** Sonar API response :', {status: res.statusCode, text: res.text});
+    this.logger.debug('*** Sonar API response :', { status: res.statusCode, text: res.text });
 
     if (res.ok) {
       return true;
@@ -51,7 +48,7 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
       return false;
     }
 
-    throw {msg: 'Unexpected response from Sonar API!', response: res};
+    throw { msg: 'Unexpected response from Sonar API!', response: res };
   }
 
   private getBranchesListSonarEndpointUrl(sonarHostUrl: string) {

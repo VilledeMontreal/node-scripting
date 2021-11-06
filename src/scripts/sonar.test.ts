@@ -23,8 +23,8 @@ const nock = require('nock');
 const chai = require('chai');
 chai.should();
 chai.use(require('chai-as-promised'));
-chai.use(require("sinon-chai"));
-chai.use(require("chai-string"));
+chai.use(require('sinon-chai'));
+chai.use(require('chai-string'));
 
 const sandbox = sinon.createSandbox();
 let shellCommand: sinon.SinonStub;
@@ -70,7 +70,7 @@ const validPropertyFiles = [
   './src/utils/test-sonar-project_url-without-trailing-slash.properties'
 ];
 
-describe('sonar script', function () {
+describe('sonar script', function() {
   timeout(this, 30000);
 
   before(() => {
@@ -85,11 +85,11 @@ describe('sonar script', function () {
   afterEach(() => {
     sandbox.resetHistory();
     sandbox.resetBehavior();
-  })
+  });
 
   after(() => {
     sandbox.restore();
-  })
+  });
 
   it(` should fail when sonar-project.properties is missing`, async () => {
     const loggerRecorder = new LoggerRecorder();
@@ -130,9 +130,11 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
         );
 
         expect(loggerRecorder.recordedLogs)
-        .to.startWith(`info: Script "sonar" starting...\n`)
-        .and.to.contain('info: Executing: git branch,--show-current\n')
-        .and.to.endWith('error: Script "sonar" failed after 0 s with: Expected success codes were "0", but the process exited with "128".\n');
+          .to.startWith(`info: Script "sonar" starting...\n`)
+          .and.to.contain('info: Executing: git branch,--show-current\n')
+          .and.to.endWith(
+            'error: Script "sonar" failed after 0 s with: Expected success codes were "0", but the process exited with "128".\n'
+          );
 
         subScript.should.not.have.been.called;
 
@@ -146,22 +148,19 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
         const loggerRecorder = new LoggerRecorder();
         const sonarInitScript = getSonarScript(null, loggerRecorder.logger);
 
-        await expect(sonarInitScript.run()).to.be.rejectedWith(
-          Error,
-          'Not Found'
-        );
+        await expect(sonarInitScript.run()).to.be.rejectedWith(Error, 'Not Found');
 
         assert.isTrue(nock.isDone(), `There are remaining expected HTTP calls: ${nock.pendingMocks().toString()}`);
 
         expect(loggerRecorder.recordedLogs)
-        .to.startWith('info: Script "sonar" starting...\n')
-        .and.to.contain.oneOf([
-          'error: "https://example.com/sonar/" Sonar server is not reachable.\n',
-          'error: "https://example.com/sonar" Sonar server is not reachable.\n'
-        ])
-        .and.to.endWith('error: Script "sonar" failed after 0 s with: Not Found\n');
+          .to.startWith('info: Script "sonar" starting...\n')
+          .and.to.contain.oneOf([
+            'error: "https://example.com/sonar/" Sonar server is not reachable.\n',
+            'error: "https://example.com/sonar" Sonar server is not reachable.\n'
+          ])
+          .and.to.endWith('error: Script "sonar" failed after 0 s with: Not Found\n');
 
-        expect(loggerRecorder.recordedLogs).to.not.contain("warn");
+        expect(loggerRecorder.recordedLogs).to.not.contain('warn');
 
         shellCommand.should.have.been.calledOnceWith('git', ['branch', '--show-current']);
       });
@@ -181,9 +180,9 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
           await sonarScript.run();
 
           expect(loggerRecorder.recordedLogs)
-          .to.startWith('info: Script "sonar" starting...\n')
-          .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
-          .and.to.endWith('info: Script "sonar" successful after 0 s\n');
+            .to.startWith('info: Script "sonar" starting...\n')
+            .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
+            .and.to.endWith('info: Script "sonar" successful after 0 s\n');
 
           subScript.should.not.have.been.called;
 
@@ -201,32 +200,34 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
           await sonarScript.run();
 
           expect(loggerRecorder.recordedLogs)
-          .to.startWith('info: Script "sonar" starting...\n')
-          .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
-          .and.to.endWith('info: Script "sonar" successful after 0 s\n');
+            .to.startWith('info: Script "sonar" starting...\n')
+            .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
+            .and.to.endWith('info: Script "sonar" successful after 0 s\n');
 
           subScript.should.not.have.been.called;
 
           shellCommand.should.have.been.calledTwice;
           shellCommand.should.have.been.calledWith('git', ['branch', '--show-current']);
-          shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, ['-Dsonar.branch.name=current-local-branch', '-Dsonar.branch.target=develop']);
+          shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, [
+            '-Dsonar.branch.name=current-local-branch',
+            '-Dsonar.branch.target=develop'
+          ]);
         });
 
         it(` should fail when simple code analysis fails.`, async () => {
           const loggerRecorder = new LoggerRecorder();
           const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
-          shellCommand.withArgs(SONAR_SCANNER).rejects(new Error('An error occurred while analyzing source code.'))
+          shellCommand.withArgs(SONAR_SCANNER).rejects(new Error('An error occurred while analyzing source code.'));
 
-          await expect(sonarScript.run()).to.be.rejectedWith(
-            Error,
-            'An error occurred while analyzing source code.'
-          );
+          await expect(sonarScript.run()).to.be.rejectedWith(Error, 'An error occurred while analyzing source code.');
 
           expect(loggerRecorder.recordedLogs)
-          .to.startWith('info: Script "sonar" starting...\n')
-          .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
-          .and.to.endWith(`error: Script "sonar" failed after 0 s with: An error occurred while analyzing source code.\n`);
+            .to.startWith('info: Script "sonar" starting...\n')
+            .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
+            .and.to.endWith(
+              `error: Script "sonar" failed after 0 s with: An error occurred while analyzing source code.\n`
+            );
 
           subScript.should.not.have.been.called;
 
@@ -251,13 +252,13 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
           await sonarScript.run();
 
           expect(loggerRecorder.recordedLogs)
-          .to.startWith('info: Script "sonar" starting...\n')
-          .and.to.contain.oneOf([
-            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n",
-            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar ! Initializing it first...\n"
-          ])
-          .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
-          .and.to.endWith('info: Script "sonar" successful after 0 s\n');
+            .to.startWith('info: Script "sonar" starting...\n')
+            .and.to.contain.oneOf([
+              "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n",
+              "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar ! Initializing it first...\n"
+            ])
+            .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
+            .and.to.endWith('info: Script "sonar" successful after 0 s\n');
 
           subScript.should.have.been.calledOnceWithExactly(SonarInitScript, {}, {});
 
@@ -275,26 +276,31 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
           await sonarScript.run();
 
           expect(loggerRecorder.recordedLogs)
-          .to.startWith('info: Script "sonar" starting...\n')
-          .and.to.contain.oneOf([
-            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n",
-            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar ! Initializing it first...\n"
-          ])
-          .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
-          .and.to.endWith('info: Script "sonar" successful after 0 s\n');
+            .to.startWith('info: Script "sonar" starting...\n')
+            .and.to.contain.oneOf([
+              "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n",
+              "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar ! Initializing it first...\n"
+            ])
+            .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
+            .and.to.endWith('info: Script "sonar" successful after 0 s\n');
 
           subScript.should.have.been.calledOnceWithExactly(SonarInitScript, {}, {});
 
           shellCommand.should.have.been.calledTwice;
           shellCommand.should.have.been.calledWith('git', ['branch', '--show-current']);
-          shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, ['-Dsonar.branch.name=current-local-branch', '-Dsonar.branch.target=develop']);
+          shellCommand.should.have.been.calledWithExactly(SONAR_SCANNER, [
+            '-Dsonar.branch.name=current-local-branch',
+            '-Dsonar.branch.target=develop'
+          ]);
         });
 
         it(` should fail when Sonar project initialization fails.`, async () => {
           const loggerRecorder = new LoggerRecorder();
           const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
-          subScript.withArgs(SonarInitScript).rejects(new Error('An error occurred while calling sonar-init sub-script.'))
+          subScript
+            .withArgs(SonarInitScript)
+            .rejects(new Error('An error occurred while calling sonar-init sub-script.'));
 
           await expect(sonarScript.run()).to.be.rejectedWith(
             Error,
@@ -302,13 +308,15 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
           );
 
           expect(loggerRecorder.recordedLogs)
-          .to.startWith('info: Script "sonar" starting...\n')
-          .and.to.contain.oneOf([
-            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n",
-            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar ! Initializing it first...\n"
-          ])
-          .and.to.endWith('error: Script "sonar" failed after 0 s with: An error occurred while calling sonar-init sub-script.\n')
-          .and.to.not.contain('info: Analyzing current branch "current-local-branch" source code...\n')
+            .to.startWith('info: Script "sonar" starting...\n')
+            .and.to.contain.oneOf([
+              "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n",
+              "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar ! Initializing it first...\n"
+            ])
+            .and.to.endWith(
+              'error: Script "sonar" failed after 0 s with: An error occurred while calling sonar-init sub-script.\n'
+            )
+            .and.to.not.contain('info: Analyzing current branch "current-local-branch" source code...\n');
 
           subScript.should.have.been.calledOnceWithExactly(SonarInitScript, {}, {});
 
@@ -322,19 +330,18 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
           subScript.withArgs(SonarInitScript).returns(0);
           shellCommand.withArgs(SONAR_SCANNER).rejects(new Error('An error occurred while analyzing source code.'));
 
-          await expect(sonarScript.run()).to.be.rejectedWith(
-            Error,
-            'An error occurred while analyzing source code.'
-          );
+          await expect(sonarScript.run()).to.be.rejectedWith(Error, 'An error occurred while analyzing source code.');
 
           expect(loggerRecorder.recordedLogs)
-          .to.startWith('info: Script "sonar" starting...\n')
-          .and.to.contain.oneOf([
-            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n",
-            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar ! Initializing it first...\n"
-          ])
-          .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
-          .and.to.endWith('error: Script "sonar" failed after 0 s with: An error occurred while analyzing source code.\n')
+            .to.startWith('info: Script "sonar" starting...\n')
+            .and.to.contain.oneOf([
+              "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n",
+              "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar ! Initializing it first...\n"
+            ])
+            .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
+            .and.to.endWith(
+              'error: Script "sonar" failed after 0 s with: An error occurred while analyzing source code.\n'
+            );
 
           subScript.should.have.been.calledOnceWithExactly(SonarInitScript, {}, {});
 
@@ -358,7 +365,10 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       const loggerRecorder = new LoggerRecorder();
       const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
-      expect(sonarScript.run()).to.be.rejectedWith(Error, '"sonar.host.url" property must be defined in "sonar-project.properties" file!');
+      expect(sonarScript.run()).to.be.rejectedWith(
+        Error,
+        '"sonar.host.url" property must be defined in "sonar-project.properties" file!'
+      );
 
       subScript.should.not.have.been.called;
       shellCommand.should.not.have.been.called;
@@ -377,7 +387,10 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       const loggerRecorder = new LoggerRecorder();
       const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
-      expect(sonarScript.run()).to.be.rejectedWith(Error, '"sonar.projectKey" property must be defined in "sonar-project.properties" file!');
+      expect(sonarScript.run()).to.be.rejectedWith(
+        Error,
+        '"sonar.projectKey" property must be defined in "sonar-project.properties" file!'
+      );
 
       subScript.should.not.have.been.called;
       shellCommand.should.not.have.been.called;

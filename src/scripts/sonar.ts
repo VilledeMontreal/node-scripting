@@ -28,7 +28,7 @@ export class SonarScript extends SonarBaseScript<Options> {
   }
 
   protected async main() {
-    const {sonarHostUrl, sonarProjectKey} = this.getSonarProjectInformation();
+    const { sonarHostUrl, sonarProjectKey } = this.getSonarProjectInformation();
 
     // TODO Geraud : extract method to determine current git branch
     let currentBranch = '';
@@ -38,8 +38,10 @@ export class SonarScript extends SonarBaseScript<Options> {
       }
     });
 
-    if (! await this.sonarProjectAlreadyExists(sonarProjectKey, sonarHostUrl)) {
-      this.logger.warn(`'${sonarProjectKey}' Sonar project does not yet exist on ${sonarHostUrl} ! Initializing it first...`);
+    if (!(await this.sonarProjectAlreadyExists(sonarProjectKey, sonarHostUrl))) {
+      this.logger.warn(
+        `'${sonarProjectKey}' Sonar project does not yet exist on ${sonarHostUrl} ! Initializing it first...`
+      );
       await this.invokeScript(SonarInitScript, {}, {});
     }
 
