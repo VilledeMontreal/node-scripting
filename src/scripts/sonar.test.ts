@@ -14,7 +14,8 @@ import { SonarInitScript } from './sonarInit';
 import {
   LoggerRecorder,
   simulateSonarProjectAlreadyExists,
-  simulateSonarProjectDoesNotYetExist, simulateSonarServerIsNotFound
+  simulateSonarProjectDoesNotYetExist,
+  simulateSonarServerIsNotFound
 } from '../utils/sonarTestUtils';
 
 const nock = require('nock');
@@ -66,7 +67,7 @@ function simulateThereIsNoLocalGitRepository() {
 
 const validPropertyFiles = [
   './src/utils/test-sonar-project_url-with-trailing-slash.properties',
-  // './src/utils/test-sonar-project_url-without-trailing-slash.properties'
+  './src/utils/test-sonar-project_url-without-trailing-slash.properties'
 ];
 
 describe('sonar script', function () {
@@ -154,7 +155,10 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
 
         expect(loggerRecorder.recordedLogs)
         .to.startWith('info: Script "sonar" starting...\n')
-        .and.to.contain('error: "https://example.com/sonar/" Sonar server is not reachable.')
+        .and.to.contain.oneOf([
+          'error: "https://example.com/sonar/" Sonar server is not reachable.\n',
+          'error: "https://example.com/sonar" Sonar server is not reachable.\n'
+        ])
         .and.to.endWith('error: Script "sonar" failed after 0 s with: Not Found\n');
 
         expect(loggerRecorder.recordedLogs).to.not.contain("warn");
@@ -248,7 +252,10 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
 
           expect(loggerRecorder.recordedLogs)
           .to.startWith('info: Script "sonar" starting...\n')
-          .and.to.contain("warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n")
+          .and.to.contain.oneOf([
+            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n",
+            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar ! Initializing it first...\n"
+          ])
           .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
           .and.to.endWith('info: Script "sonar" successful after 0 s\n');
 
@@ -269,7 +276,10 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
 
           expect(loggerRecorder.recordedLogs)
           .to.startWith('info: Script "sonar" starting...\n')
-          .and.to.contain("warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n")
+          .and.to.contain.oneOf([
+            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n",
+            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar ! Initializing it first...\n"
+          ])
           .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
           .and.to.endWith('info: Script "sonar" successful after 0 s\n');
 
@@ -293,7 +303,10 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
 
           expect(loggerRecorder.recordedLogs)
           .to.startWith('info: Script "sonar" starting...\n')
-          .and.to.contain("warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n")
+          .and.to.contain.oneOf([
+            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n",
+            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar ! Initializing it first...\n"
+          ])
           .and.to.endWith('error: Script "sonar" failed after 0 s with: An error occurred while calling sonar-init sub-script.\n')
           .and.to.not.contain('info: Analyzing current branch "current-local-branch" source code...\n')
 
@@ -316,7 +329,10 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
 
           expect(loggerRecorder.recordedLogs)
           .to.startWith('info: Script "sonar" starting...\n')
-          .and.to.contain("warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n")
+          .and.to.contain.oneOf([
+            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar/ ! Initializing it first...\n",
+            "warn: 'my-test-project-key' Sonar project does not yet exist on https://example.com/sonar ! Initializing it first...\n"
+          ])
           .and.to.contain('info: Analyzing current branch "current-local-branch" source code...\n')
           .and.to.endWith('error: Script "sonar" failed after 0 s with: An error occurred while analyzing source code.\n')
 
