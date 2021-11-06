@@ -15,7 +15,7 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
     let res;
 
     this.logger.debug(
-      `*** Calling Sonar API to check whether ${sonarProjectKey} project exists in ${sonarHostUrl} Sonar instance...`
+      `*** Calling Sonar host check whether ${sonarHostUrl} Sonar instance is reachable...`
     );
 
     try {
@@ -24,6 +24,10 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
       this.logger.error(`"${sonarHostUrl}" Sonar server is not reachable.`);
       throw err;
     }
+
+    this.logger.debug(
+      `*** Calling Sonar API to check whether ${sonarProjectKey} project exists in ${sonarHostUrl} Sonar instance...`
+    );
 
     try {
       res = await request
