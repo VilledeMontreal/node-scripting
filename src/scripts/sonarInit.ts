@@ -3,6 +3,7 @@ import { URL } from 'url';
 import { SONAR_SCANNER } from './sonar';
 import { SonarBaseScript } from './sonarBase';
 import { IGlobalOptions } from '../globalOptions';
+import * as path from 'path';
 
 export class SonarInitScript extends SonarBaseScript<IGlobalOptions> {
   get name(): string {
@@ -58,6 +59,9 @@ export class SonarInitScript extends SonarBaseScript<IGlobalOptions> {
   }
 
   private buildSonarProjectUrl(sonarProjectKey: string, sonarHostUrl: string): URL {
-    return new URL(`dashboard?id=${sonarProjectKey}`, sonarHostUrl);
+    const projectUrl = new URL(sonarHostUrl);
+    projectUrl.pathname = path.join(projectUrl.pathname, 'dashboard');
+    projectUrl.search = `?id=${sonarProjectKey}`;
+    return projectUrl;
   }
 }

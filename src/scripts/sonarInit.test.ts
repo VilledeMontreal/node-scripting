@@ -40,7 +40,7 @@ function getSonarInitScript(logger: {}): SonarInitScript {
 
 const validPropertyFiles = [
   './src/utils/test-sonar-project_url-with-trailing-slash.properties',
-  // './src/utils/test-sonar-project_url-without-trailing-slash.properties'
+  './src/utils/test-sonar-project_url-without-trailing-slash.properties'
 ];
 
 describe('sonar-init script', function () {
@@ -65,7 +65,7 @@ error: Script "sonar-init" failed after 0 s with: ENOENT: no such file or direct
   });
 
   validPropertyFiles.forEach(propertyFile => {
-    describe(` when using "${propertyFile}" valid file`, async () => {
+    describe(` when using "${propertyFile}" valid property file`, async () => {
       before(async () => {
         await fs.copyFile(propertyFile, './sonar-project.properties');
       });
@@ -173,7 +173,10 @@ error: Script "sonar-init" failed after 0 s with: ENOENT: no such file or direct
         expect(loggerRecorder.recordedLogs)
         .to.startWith('info: Script "sonar-init" starting...\n')
         .and.to.contain("info: Initializing 'my-test-project-key' Sonar project...\n")
-        .and.to.contain('error: "https://example.com/sonar/" Sonar server is not reachable.')
+        .and.to.contain.oneOf([
+          'error: "https://example.com/sonar/" Sonar server is not reachable.',
+          'error: "https://example.com/sonar" Sonar server is not reachable.',
+        ])
         .and.to.endWith('error: Script "sonar-init" failed after 0 s with: Not Found\n');
 
         expect(loggerRecorder.recordedLogs).to.not.contain("warn");

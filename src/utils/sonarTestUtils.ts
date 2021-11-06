@@ -2,13 +2,13 @@ const nock = require('nock');
 
 export function simulateSonarServerIsNotFound() {
   nock('https://example.com')
-  .head('/sonar/')
+  .head(RegExp('/sonar/{0,1}'))
   .reply(404);
 }
 
 function simulateSonarServerIsOk() {
   nock('https://example.com')
-  .head('/sonar/')
+  .head(RegExp('/sonar/{0,1}'))
   .reply(200);
 }
 
