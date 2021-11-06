@@ -98,7 +98,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
 
   describe(' when using a valid sonar-project.properties file', async () => {
     before(async () => {
-      await fs.copyFile('./src/utils/test-sonar-project.properties', './sonar-project.properties');
+      await fs.copyFile('./src/utils/test-sonar-project_url-with-trailing-slash.properties', './sonar-project.properties');
     });
     after(async () => {
       await fs.unlink('./sonar-project.properties');
@@ -322,7 +322,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
 
   describe(' when using a sonar-project.properties file where Sonar host is missing', async () => {
     before(async () => {
-      await fs.copyFile('./src/utils/test-sonar-project-missing-host.properties', './sonar-project.properties');
+      await fs.copyFile('./src/utils/test-sonar-project_missing-host.properties', './sonar-project.properties');
     });
     after(async () => {
       await fs.unlink('./sonar-project.properties');
@@ -341,7 +341,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
 
   describe(' when using a sonar-project.properties file where Sonar project key is missing', async () => {
     before(async () => {
-      await fs.copyFile('./src/utils/test-sonar-project-missing-project-key.properties', './sonar-project.properties');
+      await fs.copyFile('./src/utils/test-sonar-project_missing-project-key.properties', './sonar-project.properties');
     });
     after(async () => {
       await fs.unlink('./sonar-project.properties');
