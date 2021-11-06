@@ -15,3 +15,5 @@ yarn.lock
 *.js
 !/src/run.js
 !/prettier.config.js
+
+.scannerwork
