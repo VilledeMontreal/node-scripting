@@ -19,7 +19,7 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
     );
 
     try {
-      res = await request.head(new URL(sonarHostUrl).toString()).timeout(5000);
+      res = await request.head(new URL(sonarHostUrl).toString()).redirects(5).timeout(20000);
     } catch (err) {
       this.logger.error(`"${sonarHostUrl}" Sonar server is not reachable.`);
       throw err;
