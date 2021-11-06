@@ -15,7 +15,8 @@ export class SonarScript extends SonarBaseScript<Options> {
   }
 
   get description(): string {
-    return 'Analyze current local branch source code and send results to Sonar server';
+    return `Analyze current local branch source code and send results to Sonar server
+* NOTE *: git v2.22 or above is required (git branch --show-current must be available)`;
   }
 
   protected async configure(command: Command): Promise<void> {
