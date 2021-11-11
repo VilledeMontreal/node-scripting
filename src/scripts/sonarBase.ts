@@ -14,12 +14,13 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
   protected async sonarProjectAlreadyExists(sonarProjectKey: string, sonarHostUrl: string): Promise<boolean> {
     let res;
 
-    this.logger.debug(
-      `*** Calling Sonar host check whether ${sonarHostUrl} Sonar instance is reachable...`
-    );
+    this.logger.debug(`*** Calling Sonar host check whether ${sonarHostUrl} Sonar instance is reachable...`);
 
     try {
-      res = await request.head(new URL(sonarHostUrl).toString()).redirects(5).timeout(20000);
+      res = await request
+        .head(new URL(sonarHostUrl).toString())
+        .redirects(5)
+        .timeout(20000);
     } catch (err) {
       this.logger.error(`"${sonarHostUrl}" Sonar server is not reachable.`);
       throw err;
