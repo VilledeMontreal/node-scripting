@@ -362,7 +362,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       const loggerRecorder = new LoggerRecorder();
       const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
-      expect(sonarScript.run()).to.be.rejectedWith(
+      await expect(sonarScript.run()).to.be.rejectedWith(
         Error,
         '"sonar.host.url" property must be defined in "sonar-project.properties" file!'
       );
@@ -384,7 +384,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       const loggerRecorder = new LoggerRecorder();
       const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
-      expect(sonarScript.run()).to.be.rejectedWith(
+      await expect(sonarScript.run()).to.be.rejectedWith(
         Error,
         '"sonar.projectKey" property must be defined in "sonar-project.properties" file!'
       );
