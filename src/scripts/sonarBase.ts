@@ -69,14 +69,10 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
       sonarProjectKey: sonarProperties.get('sonar.projectKey')
     };
     if (!result.sonarHostUrl) {
-      const errorMessage = '"sonar.host.url" property must be defined in "sonar-project.properties" file!';
-      this.logger.error(errorMessage);
-      throw new Error(errorMessage);
+      throw new Error('"sonar.host.url" property must be defined in "sonar-project.properties" file!');
     }
     if (!result.sonarProjectKey) {
-      const errorMessage = '"sonar.projectKey" property must be defined in "sonar-project.properties" file!';
-      this.logger.error(errorMessage);
-      throw new Error(errorMessage);
+      throw new Error('"sonar.projectKey" property must be defined in "sonar-project.properties" file!');
     }
     return result;
   }
