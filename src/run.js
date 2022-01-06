@@ -1,4 +1,4 @@
-// tslint:disable
+/* eslint-disable */
 const execSync = require('child_process').execSync;
 const path = require('path');
 const fs = require('fs-extra');
@@ -8,7 +8,7 @@ const globalConstants = require('@villedemontreal/general-utils').globalConstant
 
 let _isScriptingLibItself;
 
-exports.run = async function(params) {
+exports.run = async function (params) {
   try {
     const {
       caporal,
@@ -42,7 +42,6 @@ exports.run = async function(params) {
 
       if (scriptName === 'c' || scriptName === 'compile') {
         process.exit(0);
-        return;
       }
     }
 

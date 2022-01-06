@@ -1,7 +1,7 @@
-import { ScriptBase } from '../scriptBase';
+import * as path from 'path';
 import * as request from 'superagent';
 import { URL } from 'url';
-import * as path from 'path';
+import { ScriptBase } from '../scriptBase';
 
 const properties = require('java-properties');
 
@@ -17,10 +17,7 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
     this.logger.debug(`*** Calling Sonar host check whether ${sonarHostUrl} Sonar instance is reachable...`);
 
     try {
-      res = await request
-        .head(new URL(sonarHostUrl).toString())
-        .redirects(5)
-        .timeout(20000);
+      res = await request.head(new URL(sonarHostUrl).toString()).redirects(5).timeout(20000);
     } catch (err) {
       this.logger.error(`"${sonarHostUrl}" Sonar server is not reachable.`);
       throw err;
@@ -55,13 +52,6 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
 
     throw { msg: 'Unexpected response from Sonar API!', response: res };
   }
-
-  private getBranchesListSonarEndpointUrl(sonarHostUrl: string) {
-    const endpointUrl = new URL(sonarHostUrl);
-    endpointUrl.pathname = path.join(endpointUrl.pathname, 'api/project_branches/list');
-    return endpointUrl.toString();
-  }
-
   protected getSonarProjectInformation(): SonarProjectInformation {
     const sonarProperties = properties.of('sonar-project.properties');
     const result = {
@@ -75,5 +65,10 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
       throw new Error('"sonar.projectKey" property must be defined in "sonar-project.properties" file!');
     }
     return result;
+  }
+  private getBranchesListSonarEndpointUrl(sonarHostUrl: string) {
+    const endpointUrl = new URL(sonarHostUrl);
+    endpointUrl.pathname = path.join(endpointUrl.pathname, 'api/project_branches/list');
+    return endpointUrl.toString();
   }
 }

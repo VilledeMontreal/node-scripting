@@ -7,8 +7,7 @@
     "skipLibCheck": true,
     "declaration": true,
     "outDir": "dist",
-    "rootDir": ".",
-    "allowJs": true
+    "rootDir": "."
   },
-  "include": ["./src", "./scripts", "./assets"]
+  "include": ["./src/**/*.ts", "./scripts/**/*.ts", "./assets/**/*.ts"]
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { Command, program } from '@caporal/core';
 import * as _ from 'lodash';
 import { configs } from '../config/configs';
@@ -17,6 +18,13 @@ export class TestUnitsScript extends CoreScriptBase<Options> {
   get description(): string {
     return `Run the unit tests.`;
   }
+  protected get requiredDependencies(): string[] {
+    const deps = ['mocha'];
+    if (this.options.jenkins) {
+      deps.push('mocha-jenkins-reporter');
+    }
+    return deps;
+  }
 
   protected async configure(command: Command): Promise<void> {
     command.option(`--bail`, `Stop the execution of the tests as soon as an error occures.`);
@@ -26,25 +34,6 @@ export class TestUnitsScript extends CoreScriptBase<Options> {
       validator: program.STRING
     });
   }
-
-  protected get requiredDependencies(): string[] {
-    const deps = ['mocha'];
-    if (this.options.jenkins) {
-      deps.push('mocha-jenkins-reporter');
-    }
-    return deps;
-  }
-
-  private addQuotes(tokens: string[]): string[] {
-    if (_.isNil(tokens) || tokens.length === 0) {
-      return [];
-    }
-
-    return tokens.map(token => {
-      return _.isNil(token) ? token : `"${_.trim(token, '"')}"`;
-    });
-  }
-
   protected async main() {
     const cmdArgs = [];
 
@@ -108,5 +97,15 @@ export class TestUnitsScript extends CoreScriptBase<Options> {
     } catch (err) {
       throw new Error('Some unit tests failed');
     }
+  }
+
+  private addQuotes(tokens: string[]): string[] {
+    if (_.isNil(tokens) || tokens.length === 0) {
+      return [];
+    }
+
+    return tokens.map(token => {
+      return _.isNil(token) ? token : `"${_.trim(token, '"')}"`;
+    });
   }
 }

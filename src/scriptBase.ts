@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/ban-types */
 import {
   ActionParameters,
   chalk,
@@ -50,6 +52,18 @@ export abstract class ScriptBase<
     this._actionParams = actionParams;
   }
 
+  /**
+   * Will be used to identify the script
+   * when outputing console messages.
+   */
+  get outputName(): string {
+    return this.name;
+  }
+
+  get commandConfig(): Partial<CommandConfig> {
+    return {}; // nothing by default
+  }
+
   protected get actionParams(): ActionParameters {
     if (!this._actionParams) {
       throw new Error(`No actions parameters specified!`);
@@ -75,7 +89,7 @@ export abstract class ScriptBase<
    * The script's options.
    */
   protected get options(): O & GO {
-    return (((this.actionParams.options as unknown) as O) || {}) as O & GO;
+    return ((this.actionParams.options as unknown as O) || {}) as O & GO;
   }
 
   /**
@@ -87,6 +101,16 @@ export abstract class ScriptBase<
   }
 
   /**
+   * The description of the script.
+   */
+  abstract get description(): string;
+
+  /**
+   * The name of the script.
+   */
+  abstract get name(): string;
+
+  /**
    * Register the script on Caporal
    */
   public async registerScript(caporal: Program): Promise<void> {
@@ -96,6 +120,42 @@ export abstract class ScriptBase<
     await this.configure(command);
   }
 
+  /**
+   * Runs the script.
+   */
+  public async run(): Promise<void> {
+    const start = new Date();
+    this.logger.info(`Script "${chalk.cyanBright(this.outputName)}" starting...`);
+
+    await this.validateRequiredDependencies();
+
+    try {
+      await this.main();
+    } catch (originalError) {
+      const err = typeof originalError === 'string' ? new Error(originalError) : originalError;
+      if (err.__reported) {
+        this.logger.warn(
+          `Script "${chalk.cyanBright(this.outputName)}" was aborted after ${chalk.magenta(
+            calcElapsedTime(start, new Date())
+          )}`
+        );
+      } else {
+        this.logger.error(
+          `Script "${chalk.cyanBright(this.outputName)}" failed after ${chalk.magenta(
+            calcElapsedTime(start, new Date())
+          )} with: ${chalk.red(err.message)}`
+        );
+        err.__reported = true;
+      }
+      throw err;
+    }
+
+    this.logger.info(
+      `Script "${chalk.cyanBright(this.outputName)}" successful after ${chalk.magenta(
+        calcElapsedTime(start, new Date())
+      )}`
+    );
+  }
   protected async addAction(command: Command): Promise<void> {
     command.action(async (params: ActionParameters) => {
       const script: ScriptBase = new (this as any).constructor(params);
@@ -147,7 +207,7 @@ export abstract class ScriptBase<
 
     const actionParams: ActionParameters = {
       ...this.actionParams,
-      options: (allOptions as unknown) as ParsedOptions,
+      options: allOptions as unknown as ParsedOptions,
       args
     };
     const script = new scriptType(actionParams);
@@ -249,59 +309,16 @@ export abstract class ScriptBase<
     return optionsNames;
   }
 
-  private addGlobalOptions<t>(options: t | GO) {
-    const currentGlobalOptions = {};
-
-    const commandOptionsnames = this.getCommandOptionsNames();
-    for (const [key, val] of Object.entries(this.options)) {
-      if (!commandOptionsnames.has(key)) {
-        currentGlobalOptions[key] = val;
-      }
-    }
-
-    return {
-      ...currentGlobalOptions,
-      ...options
-    };
-  }
-
-  /**
-   * The name of the script.
-   */
-  abstract get name(): string;
-
-  /**
-   * Will be used to identify the script
-   * when outputing console messages.
-   */
-  get outputName(): string {
-    return this.name;
-  }
-
-  /**
-   * The description of the script.
-   */
-  abstract get description(): string;
-
-  get commandConfig(): Partial<CommandConfig> {
-    return {}; // nothing by default
-  }
-
   /**
    * Override this method in order to add
    * options or to configure a script that
    * requires more information than a name and
    * description.
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected async configure(command: Command): Promise<void> {
     // nothing by default
   }
-
-  /**
-   * The main code to execute when the
-   * script is called.
-   */
-  protected abstract main(): Promise<void>;
 
   /**
    * Get the project direct dependencies (those
@@ -347,42 +364,27 @@ export abstract class ScriptBase<
     }
   }
 
-  /**
-   * Runs the script.
-   */
-  public async run(): Promise<void> {
-    const start = new Date();
-    this.logger.info(`Script "${chalk.cyanBright(this.outputName)}" starting...`);
+  private addGlobalOptions<t>(options: t | GO) {
+    const currentGlobalOptions = {};
 
-    await this.validateRequiredDependencies();
-
-    try {
-      await this.main();
-    } catch (originalError) {
-      const err = typeof originalError === 'string' ? new Error(originalError) : originalError;
-      if (err.__reported) {
-        this.logger.warn(
-          `Script "${chalk.cyanBright(this.outputName)}" was aborted after ${chalk.magenta(
-            calcElapsedTime(start, new Date())
-          )}`
-        );
-      } else {
-        this.logger.error(
-          `Script "${chalk.cyanBright(this.outputName)}" failed after ${chalk.magenta(
-            calcElapsedTime(start, new Date())
-          )} with: ${chalk.red(err.message)}`
-        );
-        err.__reported = true;
+    const commandOptionsnames = this.getCommandOptionsNames();
+    for (const [key, val] of Object.entries(this.options)) {
+      if (!commandOptionsnames.has(key)) {
+        currentGlobalOptions[key] = val;
       }
-      throw err;
     }
 
-    this.logger.info(
-      `Script "${chalk.cyanBright(this.outputName)}" successful after ${chalk.magenta(
-        calcElapsedTime(start, new Date())
-      )}`
-    );
+    return {
+      ...currentGlobalOptions,
+      ...options
+    };
   }
+
+  /**
+   * The main code to execute when the
+   * script is called.
+   */
+  protected abstract main(): Promise<void>;
 }
 
 function calcElapsedTime(from: Date, to: Date) {

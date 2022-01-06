@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { ParsedArgumentsObject } from '@caporal/core';
 import { CoreScriptBase } from './coreScriptBase';
 import { IGlobalOptions } from './globalOptions';

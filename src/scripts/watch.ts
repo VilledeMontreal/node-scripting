@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { Command } from '@caporal/core';
 import { utils } from '@villedemontreal/general-utils';
 import * as _ from 'lodash';
@@ -34,7 +35,6 @@ that point since the incremental compilation is already done by this script.`;
 
   protected async main() {
     this.logger.info(
-      // tslint:disable-next-line: prefer-template
       `\n==========================================\n` +
         `Starting incremental compilation...\n` +
         `==========================================\n`
@@ -102,10 +102,9 @@ that point since the incremental compilation is already done by this script.`;
         if (_.isString(err) && err.indexOf('3221225786') >= 0) {
           this.logger.error('Exiting...');
           process.exit(0);
-          return;
         }
 
-        this.logger.error('Error, restarting incremental compilation in a second : ' + err);
+        this.logger.error(`Error, restarting incremental compilation in a second : ${err}`);
         await utils.sleep(1000);
       }
     }

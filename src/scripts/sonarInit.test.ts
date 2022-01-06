@@ -1,22 +1,21 @@
-// ==========================================
-// Disabling some linting rules is OK in test files.
-// tslint:disable:no-console
-// tslint:disable:max-func-body-length
-// tslint:disable:no-unused-expression
-// ==========================================
-import { describe, it } from 'mocha';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable no-console */
+/* eslint-disable max-lines-per-function */
 import { assert, expect } from 'chai';
-import { setTestingConfigs, timeout } from '../utils/testingUtils';
-import { SonarInitScript } from './sonarInit';
-import * as sinon from 'sinon';
 import * as fs from 'fs-extra';
+import { describe, it } from 'mocha';
+import * as sinon from 'sinon';
 import {
   LoggerRecorder,
   simulateSonarProjectAlreadyExists,
   simulateSonarProjectDoesNotYetExist,
   simulateSonarServerIsNotFound
 } from '../utils/sonarTestUtils';
+import { setTestingConfigs, timeout } from '../utils/testingUtils';
 import { SONAR_SCANNER } from './sonar';
+import { SonarInitScript } from './sonarInit';
 
 const nock = require('nock');
 
@@ -44,7 +43,7 @@ const validPropertyFiles = [
   './src/utils/test-sonar-project_url-without-trailing-slash.properties'
 ];
 
-describe('sonar-init script', function() {
+describe('sonar-init script', function () {
   timeout(this, 30000);
 
   before(() => {
@@ -66,6 +65,7 @@ error: Script "sonar-init" failed after 0 s with: ENOENT: no such file or direct
   });
 
   validPropertyFiles.forEach(propertyFile => {
+    // eslint-disable-next-line @typescript-eslint/require-await
     describe(` when using "${propertyFile}" valid property file`, async () => {
       before(async () => {
         await fs.copyFile(propertyFile, './sonar-project.properties');
