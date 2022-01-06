@@ -11,7 +11,7 @@ export class TsLintScript extends CoreLintScriptBase {
   }
 
   protected async main() {
-    const { tslintCheck, ProjectType } = require(`${configs.projectRoot}/node_modules/@villedemontreal/lint-config`);
-    await tslintCheck(configs.projectRoot, ProjectType.NODE);
+    const { eslintCheck, ProjectType } = require(`${configs.projectRoot}/node_modules/@villedemontreal/lint-config`);
+    await eslintCheck(configs.projectRoot, ProjectType.NODE);
   }
 }

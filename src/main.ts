@@ -1,4 +1,6 @@
-// tslint:disable:no-console
+/* eslint-disable prefer-rest-params */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable no-console */
 import { Action, ActionParameters, chalk, Command, Program } from '@caporal/core';
 import { globalConstants } from '@villedemontreal/general-utils';
 import { IScriptConstructor, ScriptBase, TESTING_SCRIPT_NAME_PREFIX } from './scriptBase';
@@ -49,10 +51,8 @@ export async function main(caporal: Program, projectScriptsIndexModule: string, 
   }
 
   function addExecutedCommandExtractor() {
-    // tslint:disable-next-line: no-string-literal
     const runOriginal = caporal['_run'].bind(caporal);
-    // tslint:disable-next-line: no-string-literal only-arrow-functions
-    caporal['_run'] = async function(result: any, cmd: any) {
+    caporal['_run'] = async function (result: any, cmd: any) {
       executedCommand = cmd;
       return await runOriginal(...arguments);
     };
@@ -60,8 +60,9 @@ export async function main(caporal: Program, projectScriptsIndexModule: string, 
 }
 
 function addUnhandledRejectionHandler() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   process.on('unhandledRejection', (reason, p) => {
-    console.error('Promise rejection error : ' + reason);
+    console.error(`Promise rejection error : ${reason}`);
   });
 }
 
@@ -89,6 +90,7 @@ function patchHelpCommand(caporal: Program, helpCommand: Command) {
     throw new Error('Help command has already been patched');
   }
   (helpCommand as any)._action = (actionParams: ActionParameters) => {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     return new Promise(async (resolve, reject) => {
       // ==========================================
       // The "help" output seems to be done asynchronously,

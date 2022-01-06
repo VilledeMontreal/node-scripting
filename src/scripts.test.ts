@@ -1,8 +1,8 @@
-// ==========================================
-// Disabling some linting rules is OK in test files.
-// tslint:disable:max-func-body-length
-// tslint:disable: no-console
-// ==========================================
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable no-console */
+/* eslint-disable prefer-rest-params */
+/* eslint-disable max-lines-per-function */
 import { program as caporal, Program } from '@caporal/core';
 import { globalConstants, utils } from '@villedemontreal/general-utils';
 import { assert } from 'chai';
@@ -22,7 +22,7 @@ import {
 } from './utils/testingUtils';
 const nock = require('nock');
 
-describe(`Scripts tests`, function() {
+describe(`Scripts tests`, function () {
   timeout(this, 30000);
 
   before(() => {
@@ -30,7 +30,7 @@ describe(`Scripts tests`, function() {
   });
 
   describe(`Compilation`, () => {
-    it(`Default`, async function() {
+    it(`Default`, async function () {
       timeout(this, 60000);
 
       const distDir = path.resolve(`${__dirname}/..`);
@@ -126,7 +126,7 @@ describe(`Scripts tests`, function() {
   });
 
   describe(`Main Help`, () => {
-    it(`No args at all - compilation is done and main help is displayed`, async function() {
+    it(`No args at all - compilation is done and main help is displayed`, async function () {
       timeout(this, 60000);
 
       const { output, isSuccess } = await run();
@@ -138,7 +138,7 @@ describe(`Scripts tests`, function() {
       assert.isTrue(isMainHelpDisplayed(output));
     });
 
-    it(`Just "help" and "--nc" - no compilation is done and main help is displayed`, async function() {
+    it(`Just "help" and "--nc" - no compilation is done and main help is displayed`, async function () {
       timeout(this, 60000);
 
       const { output, isSuccess } = await run(`help`, `--nc`);
@@ -149,7 +149,7 @@ describe(`Scripts tests`, function() {
       assert.isTrue(isMainHelpDisplayed(output));
     });
 
-    it(`Just "--help" - compilation is done and main help is displayed`, async function() {
+    it(`Just "--help" - compilation is done and main help is displayed`, async function () {
       timeout(this, 60000);
 
       const { output, isSuccess } = await run(`--help`);
@@ -160,7 +160,7 @@ describe(`Scripts tests`, function() {
       assert.isTrue(isMainHelpDisplayed(output));
     });
 
-    it(`Just "-h" - compilation is done and main help is displayed`, async function() {
+    it(`Just "-h" - compilation is done and main help is displayed`, async function () {
       timeout(this, 60000);
 
       const { output, isSuccess } = await run(`-h`);
@@ -202,7 +202,7 @@ describe(`Scripts tests`, function() {
       assert.isTrue(isMainHelpDisplayed(output));
     });
 
-    it(`Unknown command - Main help is displayed`, async function() {
+    it(`Unknown command - Main help is displayed`, async function () {
       timeout(this, 60000);
 
       const { output, isSuccess } = await run(`NOPE`, `--nc`);
@@ -212,7 +212,7 @@ describe(`Scripts tests`, function() {
       assert.isTrue(isMainHelpDisplayed(output));
     });
 
-    it(`Unknown command with --silent arg - Main help not displayed`, async function() {
+    it(`Unknown command with --silent arg - Main help not displayed`, async function () {
       timeout(this, 60000);
 
       const { output, isSuccess } = await run(`NOPE`, `--nc`, `--silent`);
@@ -222,7 +222,7 @@ describe(`Scripts tests`, function() {
       assert.isFalse(isMainHelpDisplayed(output));
     });
 
-    it(`Unknown command with --quiet arg - Main help not displayed`, async function() {
+    it(`Unknown command with --quiet arg - Main help not displayed`, async function () {
       timeout(this, 60000);
 
       const { output, isSuccess } = await run(`NOPE`, `--nc`, `--quiet`);
@@ -368,9 +368,9 @@ describe(`Scripts tests`, function() {
         {},
         {
           get: (target, prop) => {
-            // tslint:disable-next-line: only-arrow-functions
-            return function() {
+            return function () {
               if (prop === 'info') {
+                // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
                 output += arguments[0] + '\n';
               }
             };
@@ -663,9 +663,7 @@ error: Script "sonar-init" failed after 0 s with: ENOENT: no such file or direct
           .query({ project: 'my-project-key' })
           .reply(200);
 
-        nock('https://example.com')
-          .get('/sonar/api/another_endpoint')
-          .reply(200);
+        nock('https://example.com').get('/sonar/api/another_endpoint').reply(200);
 
         const { output, isSuccess } = await run(`sonar-init`, '-v');
 

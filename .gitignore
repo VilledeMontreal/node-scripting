@@ -3,7 +3,6 @@ temp
 node_modules
 /log
 .idea
-.eslintrc.json
 /*.log
 /test-*
 /src/test.ts

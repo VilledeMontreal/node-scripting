@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { Command } from '@caporal/core';
-import { SonarInitScript } from './sonarInit';
 import { IGlobalOptions } from '../globalOptions';
 import { SonarBaseScript } from './sonarBase';
+import { SonarInitScript } from './sonarInit';
 
 export const SONAR_SCANNER = './node_modules/.bin/sonar-scanner';
 

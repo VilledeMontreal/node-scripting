@@ -1,22 +1,21 @@
-// ==========================================
-// Disabling some linting rules is OK in test files.
-// tslint:disable:no-console
-// tslint:disable:max-func-body-length
-// tslint:disable:no-unused-expression
-// ==========================================
-import { describe, it } from 'mocha';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable no-console */
+/* eslint-disable max-lines-per-function */
 import { assert, expect } from 'chai';
-import { setTestingConfigs, timeout } from '../utils/testingUtils';
-import { SONAR_SCANNER, SonarScript } from './sonar';
-import * as sinon from 'sinon';
 import * as fs from 'fs-extra';
-import { SonarInitScript } from './sonarInit';
+import { describe, it } from 'mocha';
+import * as sinon from 'sinon';
 import {
   LoggerRecorder,
   simulateSonarProjectAlreadyExists,
   simulateSonarProjectDoesNotYetExist,
   simulateSonarServerIsNotFound
 } from '../utils/sonarTestUtils';
+import { setTestingConfigs, timeout } from '../utils/testingUtils';
+import { SonarScript, SONAR_SCANNER } from './sonar';
+import { SonarInitScript } from './sonarInit';
 
 const nock = require('nock');
 
@@ -30,6 +29,7 @@ const sandbox = sinon.createSandbox();
 let shellCommand: sinon.SinonStub;
 let subScript: sinon.SinonStub;
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 function getSonarScript(targetBranch: string, logger: {}): SonarScript {
   let options = {};
   if (targetBranch) {
@@ -70,7 +70,7 @@ const validPropertyFiles = [
   './src/utils/test-sonar-project_url-without-trailing-slash.properties'
 ];
 
-describe('sonar script', function() {
+describe('sonar script', function () {
   timeout(this, 30000);
 
   before(() => {

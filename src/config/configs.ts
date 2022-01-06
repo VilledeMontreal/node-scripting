@@ -34,19 +34,11 @@ export class Configs {
     return this.caporalVar;
   }
 
-  public setCaporal(caporal: Program) {
-    this.caporalVar = caporal;
-  }
-
   public get projectRoot() {
     if (!this.projectRootVar) {
       throw new Error(`The project root must have been set on the configurations!`);
     }
     return this.projectRootVar;
-  }
-
-  public setProjectRoot(projectRoot: string) {
-    this.projectRootVar = projectRoot;
   }
 
   public get projectOutDir() {
@@ -56,10 +48,6 @@ export class Configs {
     return this.projectOutDirVar;
   }
 
-  public setProjectOutDir(projectOutDir: string) {
-    this.projectOutDirVar = projectOutDir;
-  }
-
   public get testsLocations() {
     if (!this.testsLocationsVar) {
       throw new Error(`The project tests locations must have been set on the configurations!`);
@@ -67,9 +55,21 @@ export class Configs {
     return this.testsLocationsVar;
   }
 
+  public setCaporal(caporal: Program) {
+    this.caporalVar = caporal;
+  }
+
+  public setProjectRoot(projectRoot: string) {
+    this.projectRootVar = projectRoot;
+  }
+
+  public setProjectOutDir(projectOutDir: string) {
+    this.projectOutDirVar = projectOutDir;
+  }
+
   public setTestsLocations(testsLocations: string[]) {
     this.testsLocationsVar = testsLocations;
   }
 }
 
-export let configs: Configs = new Configs();
+export const configs: Configs = new Configs();
