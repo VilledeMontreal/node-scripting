@@ -1,6 +1,6 @@
 {
   "name": "@villedemontreal/scripting",
-  "version": "1.6.0-beta-1",
+  "version": "1.6.0-beta-2",
   "description": "Scripting core utilities",
   "main": "dist/src/index.js",
   "typings": "dist/src",
