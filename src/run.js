@@ -65,7 +65,7 @@ exports.run = async function (params) {
     // If that was the case, a tag called '__reported' was injected in
     // the error object in order to let us know that we should skip this error.
     // ==========================================
-    if (!err?.meta?.error?.__reported) {
+    if (!(err && err.meta && err.meta.error && err.meta.error.__reported)) {
       console.error(err);
     }
     process.exit(1);
@@ -106,7 +106,7 @@ function cleanParams(params) {
   const tsConfigPath = `${projectRoot}/tsconfig.json`;
   if (fs.existsSync(tsConfigPath)) {
     const tsConfigObj = require(tsConfigPath);
-    const outDirRel = tsConfigObj?.compilerOptions?.outDir;
+    const outDirRel = tsConfigObj && tsConfigObj.compilerOptions ? tsConfigObj.compilerOptions.outDir : undefined;
     if (outDirRel && !['.', './'].includes(outDirRel)) {
       outDir = path.normalize(`${projectRoot}/${outDirRel.startsWith(`./`) ? outDirRel.substring(2) : outDirRel}`);
       deleteOutDirBeforeCompilation = true;
