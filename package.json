@@ -1,6 +1,6 @@
 {
   "name": "@villedemontreal/scripting",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "Scripting core utilities",
   "main": "dist/src/index.js",
   "typings": "dist/src",
@@ -37,7 +37,7 @@
     "@caporal/core": "2.0.2",
     "@types/fs-extra": "9.0.13",
     "@types/lodash": "4.14.184",
-    "@villedemontreal/general-utils": "5.16.7",
+    "@villedemontreal/general-utils": "5.16.8",
     "fs-extra": "10.1.0",
     "is-class": "0.0.9",
     "java-properties": "1.0.2",
