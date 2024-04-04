@@ -1,8 +1,13 @@
 #!/usr/bin/env node
-const caporal = require('@caporal/core').program;
+import path from 'path';
+import caporal from '@caporal/core';
+import * as url from 'url';
 
-require(`${__dirname}/src/run`).run({
-  caporal,
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+
+const script = await import(path.join(__dirname, 'src/run.js'));
+script.run({
+  caporal: caporal.default,
   projectRoot: __dirname,
-  scriptsIndexModule: `./scripts/index`
+  scriptsIndexModule: `./scripts/index.js`
 });

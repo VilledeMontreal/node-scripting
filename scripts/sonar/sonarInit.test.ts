@@ -5,18 +5,18 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable prettier/prettier */
 import { assert, expect } from 'chai';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import { describe, it } from 'mocha';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import {
   LoggerRecorder,
   simulateSonarProjectAlreadyExists,
   simulateSonarProjectDoesNotYetExist,
   simulateSonarServerIsNotFound,
-} from '../../src/utils/sonarTestUtils';
-import { setTestingConfigs, timeout } from '../../src/utils/testingUtils';
-import { SONAR_SCANNER } from './sonar';
-import { SonarInitScript } from './sonarInit';
+} from '../../src/utils/sonarTestUtils.js';
+import { setTestingConfigs, timeout } from '../../src/utils/testingUtils.js';
+import { SONAR_SCANNER } from './sonar.js';
+import { SonarInitScript } from './sonarInit.js';
 
 const nock = require('nock');
 

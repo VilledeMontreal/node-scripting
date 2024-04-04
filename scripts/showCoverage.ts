@@ -1,7 +1,7 @@
-import { Command, program } from '@caporal/core';
-import * as path from 'path';
-import { ScriptBase } from '../src';
-import { configs } from '../src/config/configs';
+import caporal from '@caporal/core';
+import path from 'path';
+import { configs } from '../src/config/configs.js';
+import { ScriptBase } from '../src/index.js';
 
 export interface Options {
   report?: string;
@@ -20,10 +20,10 @@ export class ShowCoverageScript extends ScriptBase<Options> {
     return ['nyc'];
   }
 
-  protected async configure(command: Command): Promise<void> {
+  protected async configure(command: caporal.Command): Promise<void> {
     command.option(`--report <path>`, `The relative path to the coverage report directory.`, {
       default: `output/coverage`,
-      validator: program.STRING,
+      validator: caporal.program.STRING,
     });
   }
 
@@ -40,7 +40,7 @@ export class ShowCoverageScript extends ScriptBase<Options> {
   protected getReportDir() {
     const reportDir = path.resolve(
       configs.projectRoot,
-      this.options.report,
+      this.options.report ?? 'output/coverage',
       'lcov-report/index.html'
     );
     return reportDir;

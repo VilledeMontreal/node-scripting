@@ -1,0 +1,14 @@
+{
+  "extensions": ["ts"],
+  "spec": [
+    "src/**/*.test.ts"
+  ],
+  "recursive": true,
+	"node-option": [
+		"loader=@istanbuljs/esm-loader-hook",
+		"loader=ts-node/esm"
+	],
+  "require": [
+    "ts-node/register"
+  ]
+}

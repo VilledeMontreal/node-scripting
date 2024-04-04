@@ -1,6 +1,7 @@
 {
+  "extends": "@istanbuljs/nyc-config-typescript",
   "check-coverage": true,
-  "per-file": false,
+  "per-file": true,
   "lines": 50,
   "statements": 50,
   "functions": 50,
@@ -10,13 +11,19 @@
     ".ts",
     ".tsx"
   ],
+  "include": [
+    "src/**/!(*.test.*).[tj]s?(x)",
+    "scripts/**/!(*.test.*).[tj]s?(x)"
+  ],
   "exclude": [
     "**/*.test.js",
     "**/*.test.ts"
   ],
   "reporter": [
+    "html",
+    "lcov",
     "text",
-    "lcov"
+    "text-summary"
   ],
   "report-dir": "./output/coverage",
   "cache": true,

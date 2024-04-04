@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
-import { program as caporal, Program } from '@caporal/core';
+import caporal from '@caporal/core';
 import { globalConstants, utils } from '@villedemontreal/general-utils';
 import { assert } from 'chai';
-import * as fs from 'fs-extra';
-import * as path from 'path';
-import * as sinon from 'sinon';
-import { TestingScript } from '../scripts/testing/testingScript';
-import { configs } from './config/configs';
+import fs from 'fs-extra';
+import nock from 'nock';
+import path from 'path';
+import sinon from 'sinon';
+import * as url from 'url';
+import { TestingScript } from '../scripts/testing/testingScript.js';
+import { configs } from './config/configs.js';
 import {
   containsText,
   isMainHelpDisplayed,
@@ -16,8 +18,9 @@ import {
   timeout,
   withCustomRunFile,
   withLogNodeInstance,
-} from './utils/testingUtils';
-const nock = require('nock');
+} from './utils/testingUtils.js';
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 describe(`Scripts tests`, function () {
   timeout(this, 30000);
@@ -30,7 +33,7 @@ describe(`Scripts tests`, function () {
     it(`Default`, async function () {
       timeout(this, 60000);
 
-      const distDir = path.resolve(`${__dirname}/..`);
+      const distDir = path.resolve(path.join(__dirname, '/..'));
 
       await utils.deleteDir(distDir);
       assert.isFalse(fs.existsSync(distDir));
@@ -330,12 +333,12 @@ describe(`Scripts tests`, function () {
     });
 
     it(`We can register a script without passing action parameters`, async () => {
-      const prog = new Program();
+      const prog = new caporal.Program();
       assert.isFalse(
-        caporal.getCommands().some((command) => command.name === 'testing:testingScript')
+        caporal.program.getCommands().some((command) => command.name === 'testing:testingScript')
       );
 
-      const script = new TestingScript(null); // no params!
+      const script = new TestingScript(null as any); // no params!
       await script.registerScript(prog);
 
       let found = false;
@@ -422,9 +425,9 @@ describe(`Scripts tests`, function () {
      */
     it(`Custom global options`, async () => {
       const { output, isSuccess } = await withCustomRunFile(
-        `const caporal = require('@caporal/core').program;`,
-        `const caporal = require('@caporal/core').program;
-       caporal.option('--custom', 'Custom global option', {
+        `import caporal from '@caporal/core';`,
+        `import caporal from '@caporal/core';
+        caporal.program.option('--custom', 'Custom global option', {
          global: true
        });
     `,
@@ -602,7 +605,7 @@ info: Script "testing:testingCallingScript" successful`;
     let nodeAppInstanceOriginal: string;
 
     before(() => {
-      nodeAppInstanceOriginal = process.env[globalConstants.envVariables.NODE_APP_INSTANCE];
+      nodeAppInstanceOriginal = process.env[globalConstants.envVariables.NODE_APP_INSTANCE] ?? '';
     });
 
     after(() => {

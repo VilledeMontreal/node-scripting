@@ -1,7 +1,7 @@
-import { Command, program as caporal } from '@caporal/core';
-import { ScriptBase, TESTING_SCRIPT_NAME_PREFIX } from '../../src';
-import { TestingExampleScript } from './testingExampleScript';
-import { TestingScriptWithArgs } from './testingScriptWithArgs';
+import caporal from '@caporal/core';
+import { ScriptBase, TESTING_SCRIPT_NAME_PREFIX } from '../../src/index.js';
+import { TestingExampleScript } from './testingExampleScript.js';
+import { TestingScriptWithArgs } from './testingScriptWithArgs.js';
 
 export interface Options {
   foo: number;
@@ -20,16 +20,16 @@ export class TestingCallingScript extends ScriptBase<Options> {
     return `A script that invokes another script.`;
   }
 
-  protected async configure(command: Command): Promise<void> {
+  protected async configure(command: caporal.Command): Promise<void> {
     command.option(`--foo <number>`, `A foo number`, {
       required: true,
-      validator: caporal.NUMBER,
+      validator: caporal.program.NUMBER,
     });
     command.option(`--bar [text]`, `A bar text`, {
-      validator: caporal.STRING,
+      validator: caporal.program.STRING,
     });
     command.option(`--delay [number]`, `A delay`, {
-      validator: caporal.NUMBER,
+      validator: caporal.program.NUMBER,
     });
     command.option(`--throwError`, `Throw an error`);
     command.option(

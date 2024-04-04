@@ -1,6 +1,7 @@
-import { Action, ActionParameters, chalk, Command, Program } from '@caporal/core';
+import { Action, ActionParameters, Command, Program } from '@caporal/core';
 import { globalConstants } from '@villedemontreal/general-utils';
-import { IScriptConstructor, ScriptBase, TESTING_SCRIPT_NAME_PREFIX } from './scriptBase';
+import chalk from 'chalk';
+import { IScriptConstructor, ScriptBase, TESTING_SCRIPT_NAME_PREFIX } from './scriptBase.js';
 
 /**
  * Run a script or display some help, given
@@ -22,7 +23,7 @@ export async function main(caporal: Program, projectScriptsIndexModule: string, 
   try {
     await caporal.run(localArgv);
     return 0;
-  } catch (err) {
+  } catch (err: any) {
     // ==========================================
     // Note that this error might have already been printed from
     // the BaseScript.run() method.
@@ -160,9 +161,9 @@ async function addProjectScripts(
   const scriptsNames: Set<string> = new Set();
 
   if (scriptsIndexModule) {
-    const scriptsModule = require(scriptsIndexModule);
+    const scriptsModule = await import(scriptsIndexModule);
     for (const scriptClass of Object.values(scriptsModule)) {
-      const script: ScriptBase = new (scriptClass as IScriptConstructor)(null);
+      const script: ScriptBase = new (scriptClass as IScriptConstructor)(null as any);
       if (await registerScript(caporal, script)) {
         scriptsNames.add(script.name);
       }

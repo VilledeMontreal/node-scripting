@@ -1,5 +1,6 @@
-import { ScriptBase } from '../src';
-import { configs } from '../src/config/configs';
+import path from 'path';
+import { configs } from '../src/config/configs.js';
+import { ScriptBase } from '../src/index.js';
 
 export class LintFixScript extends ScriptBase {
   get name(): string {
@@ -11,7 +12,7 @@ export class LintFixScript extends ScriptBase {
   }
 
   protected async main() {
-    await this.invokeShellCommand(`${configs.libRoot}/node_modules/.bin/eslint`, [
+    await this.invokeShellCommand(path.join(configs.libRoot, 'node_modules/.bin/eslint'), [
       '--fix',
       configs.libRoot,
     ]);

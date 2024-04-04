@@ -1,12 +1,18 @@
-const execSync = require('child_process').execSync;
-const path = require('path');
-const fs = require('fs-extra');
-const _ = require('lodash');
-const globalConstants = require('@villedemontreal/general-utils').globalConstants;
+import { execSync } from 'child_process';
+import path from 'path';
+import fs from 'fs-extra';
+import _ from 'lodash-es';
+import { globalConstants } from '@villedemontreal/general-utils';
+import { createRequire } from 'module';
+import * as url from 'url';
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+
+const require = createRequire(import.meta.url);
 
 let _isScriptingLibItself;
 
-exports.run = async function (params) {
+export const run = async function (params) {
   try {
     const { caporal, projectRoot, scriptsIndexModule, outDir, deleteOutDirBeforeCompilation } =
       cleanParams(params);
@@ -34,13 +40,12 @@ exports.run = async function (params) {
     setTestsNodeAppInstanceIfRequired(scriptName);
 
     const libModulePrefix = isScriptingLibItself() ? `../dist/src` : '.';
-
-    const { configs } = require(`${libModulePrefix}/config/configs`);
+    const { configs } = await import(path.join(libModulePrefix, 'config/configs.js'));
     configs.setCaporal(caporal);
     configs.setProjectRoot(projectRoot);
     configs.setProjectOutDir(outDir);
 
-    const { main } = require(`${libModulePrefix}/main`);
+    const { main } = await import(path.join(libModulePrefix, 'main.js'));
     const exitCode = await main(caporal, scriptsIndexModule);
     process.exit(exitCode);
   } catch (err) {
@@ -169,7 +174,7 @@ function isScriptingLibItself() {
   if (_.isNil(_isScriptingLibItself)) {
     _isScriptingLibItself = false;
 
-    const packageJsonPath = path.resolve(`${__dirname}/../package.json`);
+    const packageJsonPath = path.resolve(path.join(__dirname, '../package.json'));
     if (fs.existsSync(packageJsonPath)) {
       const packageJsonObj = require(packageJsonPath);
       _isScriptingLibItself = packageJsonObj.name === '@villedemontreal/scripting';

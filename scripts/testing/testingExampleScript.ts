@@ -1,5 +1,5 @@
-import { Command, program as caporal } from '@caporal/core';
-import { ScriptBase, TESTING_SCRIPT_NAME_PREFIX } from '../../src';
+import caporal from '@caporal/core';
+import { ScriptBase, TESTING_SCRIPT_NAME_PREFIX } from '../../src/index.js';
 
 export interface Options {
   lucky: number;
@@ -14,10 +14,10 @@ export class TestingExampleScript extends ScriptBase<Options> {
     return `Project specific script example. Display a lucky number passed as an argument.`;
   }
 
-  protected async configure(command: Command): Promise<void> {
+  protected async configure(command: caporal.Command): Promise<void> {
     command.option(`--lucky <number>`, `A lucky number`, {
       required: true,
-      validator: caporal.NUMBER,
+      validator: caporal.program.NUMBER,
     });
   }
 

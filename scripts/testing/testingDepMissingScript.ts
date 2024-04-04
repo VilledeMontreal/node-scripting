@@ -1,4 +1,4 @@
-import { ScriptBase, TESTING_SCRIPT_NAME_PREFIX } from '../../src';
+import { ScriptBase, TESTING_SCRIPT_NAME_PREFIX } from '../../src/index.js';
 
 export class TestingDepMissingScript extends ScriptBase {
   get name(): string {

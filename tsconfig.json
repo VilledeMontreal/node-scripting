@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "target": "ES2020",
-    "module": "commonjs",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
     "sourceMap": true,
     "pretty": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "newLine": "LF",
-    "charset": "utf8",
     "suppressImplicitAnyIndexErrors": true,
     "alwaysStrict": true,
     "forceConsistentCasingInFileNames": true,
@@ -18,7 +20,8 @@
     "outDir": "dist",
     "rootDir": ".",
     "declaration": true,
-    "allowJs": true
+    "allowJs": true,
+    "strict": true
   },
   "include": ["./src/**/*.ts", "./scripts/**/*.ts", "./assets/**/*.ts", "./src/run.js"]
 }

@@ -1,8 +1,8 @@
 import * as path from 'path';
 import { URL } from 'url';
-import { IGlobalOptions } from '../../src';
-import { SONAR_SCANNER } from './sonar';
-import { SonarBaseScript } from './sonarBase';
+import { IGlobalOptions } from '../../src/index.js';
+import { SONAR_SCANNER } from './sonar.js';
+import { SonarBaseScript } from './sonarBase.js';
 
 export class SonarInitScript extends SonarBaseScript<IGlobalOptions> {
   get name(): string {

@@ -1,15 +1,18 @@
-import { program as caporal } from '@caporal/core';
+import caporal from '@caporal/core';
 import { globalConstants, utils } from '@villedemontreal/general-utils';
 import { assert } from 'chai';
 import { execSync } from 'child_process';
-import * as fs from 'fs-extra';
-import * as path from 'path';
-import { configs } from '../config/configs';
+import fs from 'fs-extra';
+import path from 'path';
+import * as url from 'url';
+import { configs } from '../config/configs.js';
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 export function setTestingConfigs() {
-  configs.setCaporal(caporal);
-  configs.setProjectRoot(path.resolve(`${__dirname}/../../..`));
-  configs.setProjectOutDir(`${configs.projectRoot}/dist`);
+  configs.setCaporal(caporal.program);
+  configs.setProjectRoot(path.resolve(path.join(__dirname, '../../..')));
+  configs.setProjectOutDir(path.join(configs.projectRoot, 'dist'));
 }
 
 /**

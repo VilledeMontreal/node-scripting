@@ -1,9 +1,9 @@
-import * as path from 'path';
+import path from 'path';
 import * as request from 'superagent';
 import { URL } from 'url';
-import { ScriptBase } from '../../src';
+import { ScriptBase } from '../../src/index.js';
 
-const properties = require('java-properties');
+import properties from 'java-properties';
 
 export interface SonarProjectInformation {
   sonarHostUrl: string;
@@ -37,7 +37,7 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
         .get(this.getBranchesListSonarEndpointUrl(sonarHostUrl))
         .query({ project: sonarProjectKey })
         .timeout(10000);
-    } catch (err) {
+    } catch (err: any) {
       if (err.response?.notFound) {
         // 404 is the only http error we want to keep track of
         res = err.response;
@@ -58,10 +58,11 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
     throw { msg: 'Unexpected response from Sonar API!', response: res };
   }
   protected getSonarProjectInformation(): SonarProjectInformation {
-    const sonarProperties = properties.of('sonar-project.properties');
+    const filename = 'sonar-project.properties';
+    const sonarProperties = properties.of(filename);
     const result = {
-      sonarHostUrl: sonarProperties.get('sonar.host.url'),
-      sonarProjectKey: sonarProperties.get('sonar.projectKey'),
+      sonarHostUrl: getPropertyOf(filename, sonarProperties, 'sonar.host.url'),
+      sonarProjectKey: getPropertyOf(filename, sonarProperties, 'sonar.projectKey'),
     };
     if (!result.sonarHostUrl) {
       throw new Error(
@@ -80,4 +81,18 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
     endpointUrl.pathname = path.join(endpointUrl.pathname, 'api/project_branches/list');
     return endpointUrl.toString();
   }
+}
+
+function getPropertyOf(filename: string, props: properties.PropertiesFile, name: string): string {
+  const result = props.get(name);
+  if (result === undefined) {
+    throw new Error(`Expected ${name}`);
+  }
+  if (typeof(result) === 'string') {
+    return result;
+  }
+  if (result.length != 1) {
+    throw new Error(`Expected to find a single string in file '${filename}' for property '${name}'`);
+  }
+  return result[0];
 }

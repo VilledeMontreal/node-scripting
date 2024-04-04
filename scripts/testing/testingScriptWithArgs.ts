@@ -1,5 +1,5 @@
-import { Command, program as caporal } from '@caporal/core';
-import { IGlobalOptions, ScriptBase, TESTING_SCRIPT_NAME_PREFIX } from '../../src';
+import caporal from '@caporal/core';
+import { IGlobalOptions, ScriptBase, TESTING_SCRIPT_NAME_PREFIX } from '../../src/index.js';
 
 export type Args = {
   name: string;
@@ -20,14 +20,14 @@ export class TestingScriptWithArgs extends ScriptBase<Options, IGlobalOptions, A
     return `Example of script with arguments and options that will be called by another script.`;
   }
 
-  protected async configure(command: Command): Promise<void> {
+  protected async configure(command: caporal.Command): Promise<void> {
     command.argument(`<name>`, `a name`);
     command.option(`--port <number>`, `A port number`, {
       required: true,
-      validator: caporal.NUMBER,
+      validator: caporal.program.NUMBER,
     });
     command.option(`--delay <number>`, `A delay in ms`, {
-      validator: caporal.NUMBER,
+      validator: caporal.program.NUMBER,
     });
     command.option(`--throwError`, `Throw an error`);
   }

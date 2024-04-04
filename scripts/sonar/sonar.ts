@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/require-await */
 import { Command } from '@caporal/core';
-import { IGlobalOptions } from '../../src';
-import { SonarBaseScript } from './sonarBase';
-import { SonarInitScript } from './sonarInit';
+import { IGlobalOptions } from '../../src/index.js';
+import { SonarBaseScript } from './sonarBase.js';
+import { SonarInitScript } from './sonarInit.js';
 
 export const SONAR_SCANNER = './node_modules/.bin/sonar-scanner';
 
@@ -53,7 +53,7 @@ export class SonarScript extends SonarBaseScript<Options> {
   }
 
   private async findCurrentGitLocalBranch() {
-    let currentBranch: string;
+    let currentBranch = '';
     await this.invokeShellCommand('git', ['branch', '--show-current'], {
       outputHandler: (stdoutOutput: string) => {
         currentBranch = stdoutOutput.trim();

@@ -1,7 +1,8 @@
-import { Command, program } from '@caporal/core';
-import * as _ from 'lodash';
-import { ScriptBase } from '../src';
-import { configs } from '../src/config/configs';
+import caporal from '@caporal/core';
+import * as _ from 'lodash-es';
+import path from 'path';
+import { configs } from '../src/config/configs.js';
+import { ScriptBase } from '../src/index.js';
 
 const TESTS_LOCATIONS = [`${configs.libRoot}/dist/src/**/*.test.js`];
 
@@ -20,7 +21,7 @@ export class TestUnitsScript extends ScriptBase<Options> {
     return `Run the unit tests.`;
   }
 
-  protected async configure(command: Command): Promise<void> {
+  protected async configure(command: caporal.Command): Promise<void> {
     command.option(`--bail`, `Stop the execution of the tests as soon as an error occures.`);
     command.option(`--jenkins`, `Configure the tests to be run by Jenkins.`);
     command.option(
@@ -28,7 +29,7 @@ export class TestUnitsScript extends ScriptBase<Options> {
       `The relative path to the report, when the tests are run for Jenkins.`,
       {
         default: `output/test-results/report.xml`,
-        validator: program.STRING,
+        validator: caporal.program.STRING,
       }
     );
   }
@@ -55,14 +56,14 @@ export class TestUnitsScript extends ScriptBase<Options> {
     const cmdArgs = [];
 
     if (await this.isProjectDirectDependency(`nyc`)) {
-      cmdArgs.push(`${configs.projectRoot}/node_modules/nyc/bin/nyc`);
+      cmdArgs.push(path.join(configs.projectRoot, 'node_modules/nyc/bin/nyc'));
     } else {
       this.logger.warn(
         `The "nyc" direct dependency was not found in your project. The tests will be run using Mocha only!`
       );
     }
 
-    cmdArgs.push(`${configs.projectRoot}/node_modules/mocha/bin/_mocha`);
+    cmdArgs.push(path.join(configs.projectRoot, 'node_modules/mocha/bin/_mocha'));
 
     // ==========================================
     // The test locations need to be quoted because

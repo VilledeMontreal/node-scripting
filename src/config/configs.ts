@@ -1,6 +1,9 @@
 import { Program } from '@caporal/core';
-import * as os from 'os';
-import * as path from 'path';
+import os from 'os';
+import path from 'path';
+import * as url from 'url';
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 export class Configs {
   /**
@@ -11,13 +14,13 @@ export class Configs {
    */
   public libRoot: string;
   public isWindows: boolean;
-  private projectRootVar: string;
-  private projectOutDirVar: string;
-  private caporalVar: Program;
+  private projectRootVar?: string;
+  private projectOutDirVar?: string;
+  private caporalVar?: Program;
 
   constructor() {
     // From the "dist/src/config" folder
-    this.libRoot = path.normalize(__dirname + '/../../..');
+    this.libRoot = path.normalize(path.join(__dirname, '../../..'));
     this.isWindows = os.platform() === 'win32';
   }
 

@@ -4,18 +4,18 @@
 /* eslint-disable no-console */
 /* eslint-disable max-lines-per-function */
 import { assert, expect } from 'chai';
-import * as fs from 'fs-extra';
+import fs from 'fs-extra';
 import { describe, it } from 'mocha';
-import * as sinon from 'sinon';
+import sinon from 'sinon';
 import {
   LoggerRecorder,
   simulateSonarProjectAlreadyExists,
   simulateSonarProjectDoesNotYetExist,
   simulateSonarServerIsNotFound,
-} from '../../src/utils/sonarTestUtils';
-import { setTestingConfigs, timeout } from '../../src/utils/testingUtils';
-import { SonarScript, SONAR_SCANNER } from './sonar';
-import { SonarInitScript } from './sonarInit';
+} from '../../src/utils/sonarTestUtils.js';
+import { setTestingConfigs, timeout } from '../../src/utils/testingUtils.js';
+import { SONAR_SCANNER, SonarScript } from './sonar.js';
+import { SonarInitScript } from './sonarInit.js';
 
 const nock = require('nock');
 
@@ -30,7 +30,7 @@ let shellCommand: sinon.SinonStub;
 let subScript: sinon.SinonStub;
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-function getSonarScript(targetBranch: string, logger: {}): SonarScript {
+function getSonarScript(targetBranch: string | null, logger: {}): SonarScript {
   let options = {};
   if (targetBranch) {
     options = {

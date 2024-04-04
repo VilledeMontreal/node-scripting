@@ -1,5 +1,5 @@
-import { ScriptBase, TESTING_SCRIPT_NAME_PREFIX } from '../../src';
-import { ITestingGlobalOptions } from './testingGlobalOptions';
+import { ScriptBase, TESTING_SCRIPT_NAME_PREFIX } from '../../src/index.js';
+import { ITestingGlobalOptions } from './testingGlobalOptions.js';
 
 export interface Options {
   throwError?: boolean;

@@ -1,10 +1,16 @@
 import { Command } from '@caporal/core';
 import { utils } from '@villedemontreal/general-utils';
-import * as _ from 'lodash';
-import * as path from 'path';
-import { ScriptBase } from '../src';
-import { configs } from '../src/config/configs';
-const notifier = require('node-notifier');
+import * as _ from 'lodash-es';
+import { createRequire } from 'module';
+import notifier from 'node-notifier';
+import path from 'path';
+import * as url from 'url';
+import { configs } from '../src/config/configs.js';
+import { ScriptBase } from '../src/index.js';
+
+const require = createRequire(import.meta.url);
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 export interface Options {
   /**
@@ -38,7 +44,7 @@ that point since the incremental compilation is already done by this script.`;
         `Starting incremental compilation...\n` +
         `==========================================\n`
     );
-    const projectName = require(configs.projectRoot + '/package.json').namae;
+    const projectName = require(path.join(configs.projectRoot, '/package.json')).namae;
     let ignoreNextCompilationComplete = false;
     const compilationCompletetRegEx = /(Compilation complete)|(Found 0 errors)/;
     // eslint-disable-next-line no-control-regex
@@ -59,7 +65,7 @@ that point since the incremental compilation is already done by this script.`;
           notifier.notify({
             title: projectName,
             message: 'incremental compilation error',
-            icon: path.normalize(`${__dirname}/../../../assets/notifications/error.png`),
+            icon: path.normalize(path.join(__dirname, '../../../assets/notifications/error.png')),
             sound: false,
           });
         } else if (compilationCompletetRegEx.test(stdoutDataClean)) {
@@ -67,7 +73,7 @@ that point since the incremental compilation is already done by this script.`;
             notifier.notify({
               title: projectName,
               message: 'incremental compilation done',
-              icon: path.normalize(`${__dirname}/../../../assets/notifications/success.png`),
+              icon: path.normalize(path.join(__dirname, '../../../assets/notifications/success.png')),
               sound: false,
             });
           }
@@ -86,7 +92,7 @@ that point since the incremental compilation is already done by this script.`;
         await this.invokeShellCommand(
           'node',
           [
-            `${configs.projectRoot}/node_modules/typescript/lib/tsc.js`,
+            path.join(configs.projectRoot, 'node_modules/typescript/lib/tsc.js'),
             '--project',
             configs.projectRoot,
             '--watch',

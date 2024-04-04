@@ -37,19 +37,22 @@ node "%~dp0\run" %*
 
 ```javascript
 #!/usr/bin/env node
-const caporal = require("@caporal/core").program;
+import caporal from '@caporal/core';
+import path from 'path';
+import * as url from 'url';
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 // Here, you could add custom global options, or tweak
 // the Caporal instance, if required.
 
 // Then it is run:
-require(`${__dirname}/node_modules/@villemontreal/core-utils-scripting-core-nodejs-lib/dist/src/run`).run(
-  {
-    caporal,
-    projectRoot: __dirname,
-    scriptsIndexModule: `./scripts/index`,
-  }
-);
+const script = await import(path.join(__dirname, 'node_modules/@villedemontreal/scripting/src/run.js'));
+script.run({
+  caporal: caporal.default,
+  projectRoot: __dirname,
+  scriptsIndexModule: `./scripts/index.js`,
+});
 ```
 
 **Note**: si vous êtes sur Linux/Mac, vous devrez aussi lancer `chmod +x run` pour rendre exécutable le fichier `./run`.

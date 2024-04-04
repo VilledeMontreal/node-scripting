@@ -1,7 +1,7 @@
-import { Command, program } from '@caporal/core';
-import { ScriptBase } from '../src';
-import { LintScript } from './lint';
-import { TestUnitsScript } from './testUnits';
+import caporal from '@caporal/core';
+import { ScriptBase } from '../src/index.js';
+import { LintScript } from './lint.js';
+import { TestUnitsScript } from './testUnits.js';
 
 export interface Options {
   bail?: boolean;
@@ -18,7 +18,7 @@ export class TestScript extends ScriptBase<Options> {
     return `Run the unit tests + the linting validations.`;
   }
 
-  protected async configure(command: Command): Promise<void> {
+  protected async configure(command: caporal.Command): Promise<void> {
     command.option(`--bail`, `Stop the execution of the tests as soon as an error occures.`);
     command.option(`--jenkins`, `Configure the tests to be run by Jenkins.`);
     command.option(
@@ -26,7 +26,7 @@ export class TestScript extends ScriptBase<Options> {
       `The relative path to the report, when the tests are run for Jenkins.`,
       {
         default: `output/test-results/report.xml`,
-        validator: program.STRING,
+        validator: caporal.program.STRING,
       }
     );
   }

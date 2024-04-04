@@ -1,6 +1,5 @@
 import {
   ActionParameters,
-  chalk,
   Command,
   CommandConfig,
   Logger,
@@ -9,10 +8,15 @@ import {
   Program,
 } from '@caporal/core';
 import { globalConstants, utils } from '@villedemontreal/general-utils';
+import chalk from 'chalk';
 import { StdioOptions } from 'child_process';
-import * as _ from 'lodash';
-import { configs } from './config/configs';
-import { IGlobalOptions } from './globalOptions';
+import * as _ from 'lodash-es';
+import { createRequire } from 'module';
+import path from 'path';
+import { configs } from './config/configs.js';
+import { IGlobalOptions } from './globalOptions.js';
+
+const require = createRequire(import.meta.url);
 
 /**
  * A script with a name starting with this prefix
@@ -305,7 +309,7 @@ export abstract class ScriptBase<
    */
   protected async getProjectDirectDependencies() {
     if (!projectDirectDependencies) {
-      const packageJsonObj = require(`${configs.projectRoot}/package.json`);
+      const packageJsonObj = require(path.join(configs.projectRoot, 'package.json'));
 
       projectDirectDependencies = [
         ...Object.keys(packageJsonObj.dependencies || {}),
@@ -359,7 +363,7 @@ export abstract class ScriptBase<
 
     try {
       await this.main();
-    } catch (originalError) {
+    } catch (originalError: any) {
       const err = typeof originalError === 'string' ? new Error(originalError) : originalError;
       if (err.__reported) {
         this.logger.warn(
