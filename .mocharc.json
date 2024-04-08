@@ -1,7 +1,8 @@
 {
   "extensions": ["ts"],
   "spec": [
-    "src/**/*.test.ts"
+    "src/**/*.test.ts",
+    "scripts/**/*.test.ts"
   ],
   "recursive": true,
 	"node-option": [

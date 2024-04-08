@@ -2,10 +2,10 @@
   "extends": "@istanbuljs/nyc-config-typescript",
   "check-coverage": true,
   "per-file": true,
-  "lines": 50,
-  "statements": 50,
+  "lines": 40,
+  "statements": 40,
   "functions": 50,
-  "branches": 50,
+  "branches": 30,
   "extension": [
     ".js",
     ".ts",

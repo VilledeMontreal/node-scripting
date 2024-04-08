@@ -20,7 +20,7 @@ export class Configs {
 
   constructor() {
     // From the "dist/src/config" folder
-    this.libRoot = path.normalize(path.join(__dirname, '../../..'));
+    this.libRoot = getProjectRoot();
     this.isWindows = os.platform() === 'win32';
   }
 
@@ -61,6 +61,14 @@ export class Configs {
   public setProjectOutDir(projectOutDir: string) {
     this.projectOutDirVar = projectOutDir;
   }
+}
+
+export function getProjectRoot() {
+  let root = path.resolve(path.join(__dirname, '../..'));
+  if (root.endsWith('/dist')) {
+    root = path.resolve(path.join(root, '..'));
+  }
+  return root;
 }
 
 export const configs: Configs = new Configs();

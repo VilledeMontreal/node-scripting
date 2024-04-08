@@ -4,15 +4,13 @@ import { assert } from 'chai';
 import { execSync } from 'child_process';
 import fs from 'fs-extra';
 import path from 'path';
-import * as url from 'url';
+import stripAnsi from 'strip-ansi';
 import { configs } from '../config/configs.js';
-
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 export function setTestingConfigs() {
   configs.setCaporal(caporal.program);
-  configs.setProjectRoot(path.resolve(path.join(__dirname, '../../..')));
-  configs.setProjectOutDir(path.join(configs.projectRoot, 'dist'));
+  configs.setProjectRoot(configs.libRoot);
+  configs.setProjectOutDir(path.join(configs.libRoot, 'dist'));
 }
 
 /**
@@ -117,7 +115,7 @@ export async function withCustomRunFile(
 export async function withLogNodeInstance(
   ...runArgs: string[]
 ): Promise<{ output: string; isSuccess: boolean }> {
-  const mainJsPath = `${configs.libRoot}/dist/src/main.js`;
+  const mainJsPath = path.join(configs.libRoot, 'dist/src/main.js');
   const mainJsCodeOriginal = fs.readFileSync(mainJsPath, 'utf8');
 
   try {
@@ -133,5 +131,61 @@ export async function withLogNodeInstance(
     return { output, isSuccess };
   } finally {
     fs.writeFileSync(mainJsPath, mainJsCodeOriginal, 'utf8');
+  }
+}
+
+export async function shouldFail(action: () => void, validator: (err: any) => boolean) {
+  let success = false;
+  try {
+    await action();
+  } catch(err: any) {
+    success = validator(err);
+  }
+  if (!success) {
+    throw new Error('Expected action to have been rejected');
+  }
+}
+
+export interface TextAssertion {
+  kind: 'startsWith' | 'endsWith' | 'contains' | 'equals';
+  value: string | string[];
+  invert?: boolean;
+}
+
+export function assertText(text: string, assertions: TextAssertion[]) {
+  if (!text) {
+    throw new Error('empty text');
+  }
+  text = stripAnsi(text);
+  for (const assertion of assertions) {    
+    let isValid = false;
+    let values = typeof assertion.value === 'string' ? [assertion.value] : assertion.value;
+    for (const value of values) {
+      switch(assertion.kind) {
+        case 'startsWith':
+          isValid = text.startsWith(value);
+          break;
+        case 'endsWith':
+          isValid = text.endsWith(value);
+          break;
+        case 'contains':
+          isValid = text.includes(value);
+          break;
+        case 'equals':
+          isValid = text === value;
+          break;
+        default:
+          throw new Error(`Unknown kind '${assertion.kind}'`);
+      }
+      if (isValid) {
+        break;
+      }
+    }
+    if (assertion.invert === true) {
+      isValid = !isValid;
+    }
+    if (!isValid) {
+      throw new Error(`Text assertion failed: kind=${assertion.kind} ${assertion.invert ? 'inverted' : ''}\nExpected:\n${assertion.value}\nText:\n${text}`);
+    }
   }
 }

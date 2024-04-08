@@ -5,9 +5,7 @@ import { globalConstants, utils } from '@villedemontreal/general-utils';
 import { assert } from 'chai';
 import fs from 'fs-extra';
 import nock from 'nock';
-import path from 'path';
 import sinon from 'sinon';
-import * as url from 'url';
 import { TestingScript } from '../scripts/testing/testingScript.js';
 import { configs } from './config/configs.js';
 import {
@@ -20,8 +18,6 @@ import {
   withLogNodeInstance,
 } from './utils/testingUtils.js';
 
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-
 describe(`Scripts tests`, function () {
   timeout(this, 30000);
 
@@ -33,8 +29,15 @@ describe(`Scripts tests`, function () {
     it(`Default`, async function () {
       timeout(this, 60000);
 
-      const distDir = path.resolve(path.join(__dirname, '/..'));
+      const distDir = configs.projectOutDir;
+      assert.isDefined(distDir, 'Expected to have a valid projectOutDir');
 
+      if (!distDir.endsWith('/dist')) {
+        throw new Error(`Expected to have the dist dir but received '${distDir}'`);
+      }
+      // Warning! The following line is very dangerous since it will destroy the whole folder!
+      // If distDir is not what is intended, for instance the root of the project, then everything will be wiped out!
+      // That's why we added an explicit validation just before.
       await utils.deleteDir(distDir);
       assert.isFalse(fs.existsSync(distDir));
 

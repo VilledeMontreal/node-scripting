@@ -1,5 +1,5 @@
 import path from 'path';
-import * as request from 'superagent';
+import request from 'superagent';
 import { URL } from 'url';
 import { ScriptBase } from '../../src/index.js';
 
@@ -86,7 +86,7 @@ export abstract class SonarBaseScript<Options> extends ScriptBase<Options> {
 function getPropertyOf(filename: string, props: properties.PropertiesFile, name: string): string {
   const result = props.get(name);
   if (result === undefined) {
-    throw new Error(`Expected ${name}`);
+    throw new Error(`"${name}" property must be defined in "${filename}" file!`);
   }
   if (typeof(result) === 'string') {
     return result;

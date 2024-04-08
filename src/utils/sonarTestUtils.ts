@@ -2,11 +2,11 @@
 import nock from 'nock';
 
 export function simulateSonarServerIsNotFound() {
-  nock('https://example.com').head(RegExp('/sonar/{0,1}')).reply(404);
+  nock('https://example.com').head(RegExp('/sonar/{0,1}')).reply(404).persist();
 }
 
 function simulateSonarServerIsOk() {
-  nock('https://example.com').head(RegExp('/sonar/{0,1}')).reply(200);
+  nock('https://example.com').head(RegExp('/sonar/{0,1}')).reply(200).persist();
 }
 
 export function simulateSonarProjectDoesNotYetExist() {
@@ -14,7 +14,8 @@ export function simulateSonarProjectDoesNotYetExist() {
   nock('https://example.com')
     .get('/sonar/api/project_branches/list')
     .query({ project: 'my-test-project-key' })
-    .reply(404);
+    .reply(404)
+    .persist();
 }
 
 export function simulateSonarProjectAlreadyExists() {
@@ -22,7 +23,8 @@ export function simulateSonarProjectAlreadyExists() {
   nock('https://example.com')
     .get('/sonar/api/project_branches/list')
     .query({ project: 'my-test-project-key' })
-    .reply(200);
+    .reply(200)
+    .persist();
 }
 
 export class LoggerRecorder {

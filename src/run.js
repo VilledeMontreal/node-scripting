@@ -39,7 +39,7 @@ export const run = async function (params) {
 
     setTestsNodeAppInstanceIfRequired(scriptName);
 
-    const libModulePrefix = isScriptingLibItself() ? `../dist/src` : '.';
+    const libModulePrefix = isScriptingLibItself() ? path.join(getProjectRoot(), 'dist/src') : '.';
     const { configs } = await import(path.join(libModulePrefix, 'config/configs.js'));
     configs.setCaporal(caporal);
     configs.setProjectRoot(projectRoot);
@@ -174,12 +174,20 @@ function isScriptingLibItself() {
   if (_.isNil(_isScriptingLibItself)) {
     _isScriptingLibItself = false;
 
-    const packageJsonPath = path.resolve(path.join(__dirname, '../package.json'));
+    const packageJsonPath = path.resolve(path.join(getProjectRoot(), 'package.json'));
     if (fs.existsSync(packageJsonPath)) {
       const packageJsonObj = require(packageJsonPath);
-      _isScriptingLibItself = packageJsonObj.name === '@villedemontreal/scripting';
+      _isScriptingLibItself = packageJsonObj?.name === '@villedemontreal/scripting';
     }
   }
 
   return _isScriptingLibItself;
+}
+
+function getProjectRoot() {
+  let root = path.resolve(path.join(__dirname, '..'));
+  if (root.endsWith('/dist')) {
+    root = path.resolve(path.join(root, '..'));
+  }
+  return root;
 }

@@ -4,7 +4,10 @@ import path from 'path';
 import { configs } from '../src/config/configs.js';
 import { ScriptBase } from '../src/index.js';
 
-const TESTS_LOCATIONS = [`${configs.libRoot}/dist/src/**/*.test.js`];
+const TESTS_LOCATIONS = [
+  path.join(configs.libRoot, 'dist/src/**/*.test.js'),
+  path.join(configs.libRoot, 'dist/scripts/**/*.test.js')
+];
 
 export interface Options {
   bail?: boolean;
