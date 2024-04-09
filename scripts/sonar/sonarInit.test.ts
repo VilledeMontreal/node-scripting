@@ -6,7 +6,6 @@
 /* eslint-disable prettier/prettier */
 import { assert, should } from 'chai';
 // import fs from 'fs-extra';
-import { describe, it } from 'mocha';
 // import nock from 'nock';
 import fs from 'fs-extra';
 import sinon from 'sinon';
@@ -22,6 +21,8 @@ import { SonarInitScript } from './sonarInit.js';
 should();
 
 const sandbox = sinon.createSandbox();
+const before = beforeAll;
+const after = afterAll;
 
 function getSonarInitScript(logger: {}): SonarInitScript {
   return new SonarInitScript({
@@ -62,7 +63,7 @@ describe('sonar-init script', function () {
 
   validPropertyFiles.forEach((propertyFile) => {
     // eslint-disable-next-line @typescript-eslint/require-await
-    describe(` when using "${propertyFile}" valid property file`, async () => {
+    describe(` when using "${propertyFile}" valid property file`, () => {
       before(async () => {
         await fs.copyFile(propertyFile, './sonar-project.properties');
       });

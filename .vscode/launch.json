@@ -2,113 +2,49 @@
   "version": "0.2.0",
   "configurations": [
     // ==========================================
-    // Debug a Script
-    // ==========================================
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Debug a Script",
-      "runtimeExecutable": "${workspaceFolder}/run",
-      "runtimeArgs": [
-        "c", // script name
-        //"--port", // script arg
-        //"notANumber", // script arg
-        //"--kiki", // script arg
-        // "--silent", // script arg
-        // "--help",
-        //"--nc",   // script arg
-      ],
-      "port": 9229,
-      "env": {
-        "ide": "true",
-        "NODE_APP_INSTANCE": "tests" // or not!
-      },
-      "sourceMaps": true,
-      "timeout": 10000,
-      "internalConsoleOptions": "neverOpen",
-      "console": "integratedTerminal",
-      "outputCapture": "std",
-      "protocol": "inspector"
-    },
-    // ==========================================
     // Debug all test files
     // ==========================================
     {
       "type": "node",
-      "request": "launch",
       "name": "Debug all tests",
-      "preLaunchTask": "tsc",
-      "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
-      "args": ["${workspaceRoot}/dist/src/**/*.test.js", 
-        "--require",
-        "source-map-support/register",
-        "--no-timeouts", "--exit"],
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+      "args": [
+        "--runInBand",
+        "--detectOpenHandles"
+      ],
       "env": {
         "ide": "true",
-        "NODE_APP_INSTANCE": "tests"
+        "NODE_OPTIONS": "--experimental-vm-modules"
       },
-      "sourceMaps": true,
-      "timeout": 10000,
-      "internalConsoleOptions": "neverOpen",
+      "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
-      "outputCapture": "std",
-      "protocol": "inspector"
+      "internalConsoleOptions": "neverOpen"
     },
+
+
     // ==========================================
     // This configuration allows you to debug
-    // the current open tests file
+    // the tests that match a regex.
+    // See the testNamePattern parameter.
     // ==========================================
     {
       "type": "node",
+      "name": "Debug tests matching a pattern",
       "request": "launch",
-      "name": "Debug current tests file",
-      "preLaunchTask": "tsc",
-      "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest",
       "args": [
-        "${workspaceRoot}/dist/${relativeFileDirname}/${fileBasenameNoExtension}.js",    
-        "--require",
-        "source-map-support/register",     
-        "--no-timeouts",
-        "--exit"
+        "--testNamePattern=sonar",
+        "--runInBand",
+        "--detectOpenHandles"
       ],
       "env": {
         "ide": "true",
-        "NODE_APP_INSTANCE": "tests"
+        "NODE_OPTIONS": "--experimental-vm-modules"
       },
-      "sourceMaps": true,
-      "timeout": 10000,
-      "internalConsoleOptions": "neverOpen",
+      "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
-      "outputCapture": "std",
-      "protocol": "inspector"
-    },
-    // ==========================================
-    // Same as above, but without compilation.
-    // To be used when "run watch" has been launched in
-    // an external terminal first.
-    // ==========================================
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Debug current tests file - fast",
-      "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
-      "args": [
-        "${workspaceRoot}/dist/${relativeFileDirname}/${fileBasenameNoExtension}.js",
-        "--require",
-        "source-map-support/register",         
-        "--no-timeouts",
-        "--exit"
-      ],
-      "env": {
-        "ide": "true",
-        "NODE_APP_INSTANCE": "tests"
-      },
-      "sourceMaps": true,
-      "timeout": 10000,
-      "internalConsoleOptions": "neverOpen",
-      "console": "integratedTerminal",
-      "outputCapture": "std",
-      "protocol": "inspector"
-    }
+      "internalConsoleOptions": "neverOpen"
+    },    
   ]
 }

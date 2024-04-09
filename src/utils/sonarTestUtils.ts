@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import nock from 'nock';
+import stripAnsi from 'strip-ansi';
 
 export function simulateSonarServerIsNotFound() {
   nock('https://example.com').head(RegExp('/sonar/{0,1}')).reply(404).persist();
@@ -41,7 +42,7 @@ export class LoggerRecorder {
         get: (target, prop) => {
           return function () {
             // eslint-disable-next-line prefer-rest-params
-            that.recordedLogs += `${prop.toString()}: ${arguments[0]}\n`;
+            that.recordedLogs += stripAnsi(`${prop.toString()}: ${arguments[0]}\n`);
           };
         },
       }

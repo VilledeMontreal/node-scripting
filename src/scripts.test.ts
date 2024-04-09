@@ -18,6 +18,9 @@ import {
   withLogNodeInstance,
 } from './utils/testingUtils.js';
 
+const before = beforeAll;
+const after = afterAll;
+
 describe(`Scripts tests`, function () {
   timeout(this, 30000);
 
@@ -663,7 +666,7 @@ error: Script "sonar-init" failed after 0 s with: ENOENT: no such file or direct
     // executed in another spawned process; therefore, using Nock to stub http calls does not work.
     // One solution to make these tests succeed would be to run a sonar server in a side-car container,
     // and then use it to test 'sonar' and 'sonar-init' scripts.
-    describe.skip(' with valid sonar-project.properties file', async () => {
+    describe.skip(' with valid sonar-project.properties file', () => {
       before(async () => {
         await fs.copyFile(
           './src/utils/test-sonar-project_url-with-trailing-slash.properties',

@@ -4,7 +4,6 @@ import { assert } from 'chai';
 import { execSync } from 'child_process';
 import fs from 'fs-extra';
 import path from 'path';
-import stripAnsi from 'strip-ansi';
 import { configs } from '../config/configs.js';
 
 export function setTestingConfigs() {
@@ -18,9 +17,9 @@ export function setTestingConfigs() {
  * the Mocha timeouts (while debugging) if a timeout
  * is specified in the code itself. Using this to set the
  * timeouts does.
+ * @deprecated
  */
-export function timeout(mocha: Mocha.Suite | Mocha.Context, milliSec: number) {
-  mocha.timeout(process.argv.includes('--no-timeouts') ? 0 : milliSec);
+export function timeout(mocha: any, milliSec: number) {
 }
 
 export function containsText(corpus: string, text: string) {
@@ -156,7 +155,6 @@ export function assertText(text: string, assertions: TextAssertion[]) {
   if (!text) {
     throw new Error('empty text');
   }
-  text = stripAnsi(text);
   for (const assertion of assertions) {    
     let isValid = false;
     let values = typeof assertion.value === 'string' ? [assertion.value] : assertion.value;

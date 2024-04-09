@@ -5,7 +5,6 @@
 /* eslint-disable max-lines-per-function */
 import { assert, expect, should } from 'chai';
 import fs from 'fs-extra';
-import { describe, it } from 'mocha';
 import nock from 'nock';
 import sinon from 'sinon';
 import {
@@ -19,6 +18,8 @@ should();
 const sandbox = sinon.createSandbox();
 let shellCommand: sinon.SinonStub;
 let subScript: sinon.SinonStub;
+const before = beforeAll;
+const after = afterAll;
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 function getSonarScript(targetBranch: string | null, logger: {}): SonarScript {
@@ -95,7 +96,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
   });
 
   // validPropertyFiles.forEach((propertyFile) => {
-  //   describe(` when using "${propertyFile}" valid file`, async () => {
+  //   describe(` when using "${propertyFile}" valid file`, () => {
   //     before(async () => {
   //       await fs.copyFile(propertyFile, './sonar-project.properties');
   //     });
@@ -373,7 +374,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
   //   });
   // });
 
-  describe(' when using a sonar-project.properties file where Sonar host is missing', async () => {
+  describe(' when using a sonar-project.properties file where Sonar host is missing', () => {
     before(async () => {
       await fs.copyFile(
         './src/utils/test-sonar-project_missing-host.properties',
@@ -395,7 +396,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
     });
   });
 
-  describe(' when using a sonar-project.properties file where Sonar project key is missing', async () => {
+  describe(' when using a sonar-project.properties file where Sonar project key is missing', () => {
     before(async () => {
       await fs.copyFile(
         './src/utils/test-sonar-project_missing-project-key.properties',

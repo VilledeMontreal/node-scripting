@@ -1,13 +1,7 @@
 import caporal from '@caporal/core';
-import * as _ from 'lodash-es';
 import path from 'path';
 import { configs } from '../src/config/configs.js';
 import { ScriptBase } from '../src/index.js';
-
-const TESTS_LOCATIONS = [
-  path.join(configs.libRoot, 'dist/src/**/*.test.js'),
-  path.join(configs.libRoot, 'dist/scripts/**/*.test.js')
-];
 
 export interface Options {
   bail?: boolean;
@@ -45,28 +39,21 @@ export class TestUnitsScript extends ScriptBase<Options> {
     return deps;
   }
 
-  private addQuotes(tokens: string[]): string[] {
-    if (_.isNil(tokens) || tokens.length === 0) {
-      return [];
-    }
-
-    return tokens.map((token) => {
-      return _.isNil(token) ? token : `"${_.trim(token, '"')}"`;
-    });
-  }
-
   protected async main() {
-    const cmdArgs = [];
+    const cmdArgs: string[] = [];
 
-    if (await this.isProjectDirectDependency(`nyc`)) {
-      cmdArgs.push(path.join(configs.projectRoot, 'node_modules/nyc/bin/nyc'));
-    } else {
-      this.logger.warn(
-        `The "nyc" direct dependency was not found in your project. The tests will be run using Mocha only!`
-      );
-    }
+    // if (await this.isProjectDirectDependency(`nyc`)) {
+    //   cmdArgs.push(path.join(configs.projectRoot, 'node_modules/nyc/bin/nyc'));
+    // } else {
+    //   this.logger.warn(
+    //     `The "nyc" direct dependency was not found in your project. The tests will be run using Mocha only!`
+    //   );
+    // }
 
-    cmdArgs.push(path.join(configs.projectRoot, 'node_modules/mocha/bin/_mocha'));
+    // cmdArgs.push(path.join(configs.projectRoot, 'node_modules/mocha/bin/_mocha'));
+    cmdArgs.push('--experimental-vm-modules');
+    
+    cmdArgs.push(path.join(configs.projectRoot, 'node_modules/jest/bin/jest'));
 
     // ==========================================
     // The test locations need to be quoted because
@@ -75,9 +62,10 @@ export class TestUnitsScript extends ScriptBase<Options> {
     //
     // @see https://mochajs.org/#the-test-directory
     // ==========================================
-    cmdArgs.push(...this.addQuotes(TESTS_LOCATIONS));
+    // cmdArgs.push(...this.addQuotes(TESTS_LOCATIONS));
 
-    cmdArgs.push(`--exit`);
+    cmdArgs.push(`--runInBand`);
+    cmdArgs.push(`--detectOpenHandles`);
 
     // ==========================================
     // Stop testing as soon as one test fails?
@@ -97,14 +85,16 @@ export class TestUnitsScript extends ScriptBase<Options> {
     // ==========================================
     if (this.options.jenkins) {
       if (this.options.report) {
-        process.env.JUNIT_REPORT_PATH = this.options.report;
-      } else if (!process.env.JUNIT_REPORT_PATH) {
-        process.env.JUNIT_REPORT_PATH = 'output/test-results/report.xml';
+        process.env.JEST_JUNIT_OUTPUT_FILE = this.options.report;
+      } else if (!process.env.JEST_JUNIT_OUTPUT_FILE) {
+        process.env.JEST_JUNIT_OUTPUT_FILE = 'output/test-results/report.xml';
       }
 
-      this.logger.info('Exporting tests to junit file ' + process.env.JUNIT_REPORT_PATH);
-      cmdArgs.push('--reporter');
-      cmdArgs.push('mocha-jenkins-reporter');
+      this.logger.info('Exporting tests to junit file ' + process.env.JEST_JUNIT_OUTPUT_FILE);
+      cmdArgs.push('--reporters');
+      cmdArgs.push('default');
+      cmdArgs.push('--reporters');
+      cmdArgs.push('jest-junit');
     }
 
     try {
