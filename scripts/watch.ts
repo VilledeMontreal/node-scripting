@@ -4,13 +4,15 @@ import * as _ from 'lodash-es';
 import { createRequire } from 'module';
 import notifier from 'node-notifier';
 import path from 'path';
-import * as url from 'url';
+import { fileURLToPath } from 'url';
 import { configs } from '../src/config/configs.js';
 import { ScriptBase } from '../src/index.js';
 
 const require = createRequire(import.meta.url);
 
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export interface Options {
   /**

@@ -1,12 +1,14 @@
 import { execSync } from 'child_process';
-import path from 'path';
+import path from 'node:path';
 import fs from 'fs-extra';
 import _ from 'lodash-es';
 import { globalConstants } from '@villedemontreal/general-utils';
 import { createRequire } from 'module';
-import * as url from 'url';
 
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+import {fileURLToPath} from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const require = createRequire(import.meta.url);
 

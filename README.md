@@ -38,10 +38,11 @@ node "%~dp0\run" %*
 ```javascript
 #!/usr/bin/env node
 import caporal from '@caporal/core';
-import path from 'path';
-import * as url from 'url';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Here, you could add custom global options, or tweak
 // the Caporal instance, if required.

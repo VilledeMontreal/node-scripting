@@ -1,9 +1,10 @@
 import { Program } from '@caporal/core';
 import os from 'os';
 import path from 'path';
-import * as url from 'url';
+import { fileURLToPath } from 'url';
 
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export class Configs {
   /**
