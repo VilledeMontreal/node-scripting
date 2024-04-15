@@ -19,11 +19,10 @@ export default {
   testTimeout: 60000,
   coverageThreshold: {
     global: {
-      branches: 30,
-      functions: 30,
-      lines: 30,
-      statements: 30,
+      branches: 50,
+      functions: 70,
+      lines: 70,
+      statements: 70,
     },
   },
-  // watchPlugins: ["jest-watch-typeahead/filename", "jest-watch-typeahead/testname"],
 };

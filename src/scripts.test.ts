@@ -13,24 +13,18 @@ import {
   isMainHelpDisplayed,
   run,
   setTestingConfigs,
-  timeout,
   withCustomRunFile,
   withLogNodeInstance,
 } from './utils/testingUtils.js';
 
-const before = beforeAll;
-const after = afterAll;
-
 describe(`Scripts tests`, function () {
-  timeout(this, 30000);
 
-  before(() => {
+  beforeAll(() => {
     setTestingConfigs();
   });
 
   describe(`Compilation`, () => {
     it(`Default`, async function () {
-      timeout(this, 60000);
 
       const distDir = configs.projectOutDir;
       assert.isDefined(distDir, 'Expected to have a valid projectOutDir');
@@ -133,8 +127,6 @@ describe(`Scripts tests`, function () {
 
   describe(`Main Help`, () => {
     it(`No args at all - compilation is done and main help is displayed`, async function () {
-      timeout(this, 60000);
-
       const { output, isSuccess } = await run();
       assert.isTrue(isSuccess);
 
@@ -145,8 +137,6 @@ describe(`Scripts tests`, function () {
     });
 
     it(`Just "help" and "--nc" - no compilation is done and main help is displayed`, async function () {
-      timeout(this, 60000);
-
       const { output, isSuccess } = await run(`help`, `--nc`);
       assert.isTrue(isSuccess);
 
@@ -156,8 +146,6 @@ describe(`Scripts tests`, function () {
     });
 
     it(`Just "--help" - compilation is done and main help is displayed`, async function () {
-      timeout(this, 60000);
-
       const { output, isSuccess } = await run(`--help`);
       assert.isTrue(isSuccess);
 
@@ -167,8 +155,6 @@ describe(`Scripts tests`, function () {
     });
 
     it(`Just "-h" - compilation is done and main help is displayed`, async function () {
-      timeout(this, 60000);
-
       const { output, isSuccess } = await run(`-h`);
       assert.isTrue(isSuccess);
 
@@ -209,8 +195,6 @@ describe(`Scripts tests`, function () {
     });
 
     it(`Unknown command - Main help is displayed`, async function () {
-      timeout(this, 60000);
-
       const { output, isSuccess } = await run(`NOPE`, `--nc`);
       assert.isFalse(isSuccess);
 
@@ -219,8 +203,6 @@ describe(`Scripts tests`, function () {
     });
 
     it(`Unknown command with --silent arg - Main help not displayed`, async function () {
-      timeout(this, 60000);
-
       const { output, isSuccess } = await run(`NOPE`, `--nc`, `--silent`);
       assert.isFalse(isSuccess);
 
@@ -229,8 +211,6 @@ describe(`Scripts tests`, function () {
     });
 
     it(`Unknown command with --quiet arg - Main help not displayed`, async function () {
-      timeout(this, 60000);
-
       const { output, isSuccess } = await run(`NOPE`, `--nc`, `--quiet`);
       assert.isFalse(isSuccess);
 
@@ -610,11 +590,11 @@ info: Script "testing:testingCallingScript" successful`;
   describe(`NODE_APP_INSTANCE env var`, () => {
     let nodeAppInstanceOriginal: string;
 
-    before(() => {
+    beforeAll(() => {
       nodeAppInstanceOriginal = process.env[globalConstants.envVariables.NODE_APP_INSTANCE] ?? '';
     });
 
-    after(() => {
+    afterAll(() => {
       if (nodeAppInstanceOriginal) {
         process.env[globalConstants.envVariables.NODE_APP_INSTANCE] = nodeAppInstanceOriginal;
       } else {
@@ -667,13 +647,13 @@ error: Script "sonar-init" failed after 0 s with: ENOENT: no such file or direct
     // One solution to make these tests succeed would be to run a sonar server in a side-car container,
     // and then use it to test 'sonar' and 'sonar-init' scripts.
     describe.skip(' with valid sonar-project.properties file', () => {
-      before(async () => {
+      beforeAll(async () => {
         await fs.copyFile(
           './src/utils/test-sonar-project_url-with-trailing-slash.properties',
           './sonar-project.properties'
         );
       });
-      after(async () => {
+      afterAll(async () => {
         await fs.unlink('./sonar-project.properties');
       });
 

@@ -12,7 +12,7 @@ import sinon from 'sinon';
 import {
   LoggerRecorder, simulateSonarProjectAlreadyExists, simulateSonarProjectDoesNotYetExist, simulateSonarServerIsNotFound,
 } from '../../src/utils/sonarTestUtils.js';
-import { assertText, setTestingConfigs, shouldFail, timeout } from '../../src/utils/testingUtils.js';
+import { assertText, setTestingConfigs, shouldFail } from '../../src/utils/testingUtils.js';
 // import { SONAR_SCANNER } from './sonar.js';
 import nock from 'nock';
 import { SONAR_SCANNER } from './sonar.js';
@@ -21,8 +21,6 @@ import { SonarInitScript } from './sonarInit.js';
 should();
 
 const sandbox = sinon.createSandbox();
-const before = beforeAll;
-const after = afterAll;
 
 function getSonarInitScript(logger: {}): SonarInitScript {
   return new SonarInitScript({
@@ -41,9 +39,8 @@ const validPropertyFiles = [
 ];
 
 describe('sonar-init script', function () {
-  timeout(this, 30000);
 
-  before(() => {
+  beforeAll(() => {
     setTestingConfigs();
   });
 
@@ -64,10 +61,10 @@ describe('sonar-init script', function () {
   validPropertyFiles.forEach((propertyFile) => {
     // eslint-disable-next-line @typescript-eslint/require-await
     describe(` when using "${propertyFile}" valid property file`, () => {
-      before(async () => {
+      beforeAll(async () => {
         await fs.copyFile(propertyFile, './sonar-project.properties');
       });
-      after(async () => {
+      afterAll(async () => {
         await fs.unlink('./sonar-project.properties');
       });
 

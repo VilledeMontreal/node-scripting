@@ -12,16 +12,6 @@ export function setTestingConfigs() {
   configs.setProjectOutDir(path.join(configs.libRoot, 'dist'));
 }
 
-/**
- * The "--no-timeouts" arg doesn't work to disable
- * the Mocha timeouts (while debugging) if a timeout
- * is specified in the code itself. Using this to set the
- * timeouts does.
- * @deprecated
- */
-export function timeout(mocha: any, milliSec: number) {
-}
-
 export function containsText(corpus: string, text: string) {
   const lines = text
     .split('\n')

@@ -17,7 +17,6 @@
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noImplicitThis": false,
     "outDir": "dist",
     "rootDir": ".",
     "resolveJsonModule": true,
