@@ -64,6 +64,8 @@ export class TestUnitsScript extends ScriptBase<Options> {
     // ==========================================
     // cmdArgs.push(...this.addQuotes(TESTS_LOCATIONS));
 
+    cmdArgs.push(`--ci`);
+    cmdArgs.push(`--no-colors`);
     cmdArgs.push(`--runInBand`);
     cmdArgs.push(`--detectOpenHandles`);
 
