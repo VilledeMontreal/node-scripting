@@ -12,7 +12,7 @@ import sinon from 'sinon';
 import {
   LoggerRecorder, simulateSonarProjectAlreadyExists, simulateSonarProjectDoesNotYetExist, simulateSonarServerIsNotFound,
 } from '../../src/utils/sonarTestUtils.js';
-import { assertText, setTestingConfigs, shouldFail } from '../../src/utils/testingUtils.js';
+import { assertText, setTestingConfigs } from '../../src/utils/testingUtils.js';
 // import { SONAR_SCANNER } from './sonar.js';
 import nock from 'nock';
 import { SONAR_SCANNER } from './sonar.js';
@@ -48,7 +48,7 @@ describe('sonar-init script', function () {
     const loggerRecorder = new LoggerRecorder();
     const sonarInitScript = getSonarInitScript(loggerRecorder.logger);
 
-    await shouldFail(() => sonarInitScript.run(), err => err.message === "ENOENT: no such file or directory, open 'sonar-project.properties'");
+    await expect(sonarInitScript.run()).rejects.toThrow("ENOENT: no such file or directory, open 'sonar-project.properties'");
 
     assertText(loggerRecorder.recordedLogs.trim(), [
       {
@@ -164,7 +164,7 @@ describe('sonar-init script', function () {
         const loggerRecorder = new LoggerRecorder();
         const sonarInitScript = getSonarInitScript(loggerRecorder.logger);
 
-        await shouldFail(() => sonarInitScript.run(), err => err.message === 'An error occured while analyzing code.');
+        await expect(sonarInitScript.run()).rejects.toThrow('An error occured while analyzing code.');
 
         assert.isTrue(
           nock.isDone(),
@@ -202,7 +202,7 @@ describe('sonar-init script', function () {
         const loggerRecorder = new LoggerRecorder();
         const sonarInitScript = getSonarInitScript(loggerRecorder.logger);
 
-        await shouldFail(() => sonarInitScript.run(), err =>  err.message === 'Not Found');
+        await expect(sonarInitScript.run()).rejects.toThrow('Not Found');
 
         assert.isTrue(
           nock.isDone(),

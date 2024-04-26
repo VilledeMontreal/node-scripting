@@ -123,18 +123,6 @@ export async function withLogNodeInstance(
   }
 }
 
-export async function shouldFail(action: () => void, validator: (err: any) => boolean) {
-  let success = false;
-  try {
-    await action();
-  } catch(err: any) {
-    success = validator(err);
-  }
-  if (!success) {
-    throw new Error('Expected action to have been rejected');
-  }
-}
-
 export interface TextAssertion {
   kind: 'startsWith' | 'endsWith' | 'contains' | 'equals';
   value: string | string[];

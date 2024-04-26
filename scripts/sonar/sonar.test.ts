@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable no-console */
 /* eslint-disable max-lines-per-function */
-import { assert, expect, should } from 'chai';
+import { assert, should } from 'chai';
 import fs from 'fs-extra';
 import { createRequire } from 'module';
 import nock from 'nock';
@@ -11,7 +11,7 @@ import sinon from 'sinon';
 import {
   LoggerRecorder, simulateSonarProjectAlreadyExists, simulateSonarProjectDoesNotYetExist, simulateSonarServerIsNotFound
 } from '../../src/utils/sonarTestUtils.js';
-import { assertText, setTestingConfigs, shouldFail } from '../../src/utils/testingUtils.js';
+import { assertText, setTestingConfigs } from '../../src/utils/testingUtils.js';
 import { SONAR_SCANNER, SonarScript } from './sonar.js';
 import { SonarInitScript } from './sonarInit.js';
 
@@ -91,9 +91,9 @@ describe('sonar script', function () {
     const loggerRecorder = new LoggerRecorder();
     const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
-    await shouldFail(() => sonarScript.run(), err => err.message === "ENOENT: no such file or directory, open 'sonar-project.properties'");
+    await expect(sonarScript.run()).rejects.toThrow("ENOENT: no such file or directory, open 'sonar-project.properties'");
 
-    expect(loggerRecorder.recordedLogs).to.equal(`info: Script "sonar" starting...
+    expect(loggerRecorder.recordedLogs).toBe(`info: Script "sonar" starting...
 error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, open 'sonar-project.properties'
 `);
   });
@@ -113,7 +113,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
         const loggerRecorder = new LoggerRecorder();
         const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
-        await shouldFail(() => sonarScript.run(), err => err.message === 'Expected success codes were "0", but the process exited with "128".');
+        await expect(sonarScript.run()).rejects.toThrow('Expected success codes were "0", but the process exited with "128".');
 
         assertText(loggerRecorder.recordedLogs, [
           {
@@ -142,7 +142,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
         const loggerRecorder = new LoggerRecorder();
         const sonarInitScript = getSonarScript(null, loggerRecorder.logger);
 
-        await shouldFail(() => sonarInitScript.run(), err => err.message === 'Not Found');
+        await expect(sonarInitScript.run()).rejects.toThrow('Not Found');
 
         assert.isTrue(
           nock.isDone(),
@@ -165,9 +165,12 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
             kind: 'endsWith',
             value: 'error: Script "sonar" failed after 0 s with: Not Found\n',
           },
+          {
+            kind: 'contains',
+            invert: true,
+            value: 'warn',
+          },
         ]);
-
-        expect(loggerRecorder.recordedLogs).to.not.contain('warn');
 
         assert.isTrue(shellCommand.calledOnceWith('git', ['branch', '--show-current']));
       });
@@ -251,7 +254,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
             .withArgs(SONAR_SCANNER)
             .rejects(new Error('An error occurred while analyzing source code.'));
 
-          await shouldFail(() => sonarScript.run(), err => err.message === 'An error occurred while analyzing source code.');
+          await expect(sonarScript.run()).rejects.toThrow('An error occurred while analyzing source code.');
 
           assertText(loggerRecorder.recordedLogs, [
             {
@@ -371,7 +374,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
             .withArgs(SonarInitScript)
             .rejects(new Error('An error occurred while calling sonar-init sub-script.'));
 
-          await shouldFail(() => sonarScript.run(), err => err.message === 'An error occurred while calling sonar-init sub-script.');
+          await expect(sonarScript.run()).rejects.toThrow('An error occurred while calling sonar-init sub-script.');
 
           assertText(loggerRecorder.recordedLogs, [
             {
@@ -410,7 +413,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
             .withArgs(SONAR_SCANNER)
             .rejects(new Error('An error occurred while analyzing source code.'));
 
-          await shouldFail(() => sonarScript.run(), err => err.message === 'An error occurred while analyzing source code.');
+          await expect(sonarScript.run()).rejects.toThrow('An error occurred while analyzing source code.');
 
           assertText(loggerRecorder.recordedLogs, [
             {
@@ -461,7 +464,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       const loggerRecorder = new LoggerRecorder();
       const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
-      await shouldFail(() => sonarScript.run(), err => err.message === '"sonar.host.url" property must be defined in "sonar-project.properties" file!');
+      await expect(sonarScript.run()).rejects.toThrow('"sonar.host.url" property must be defined in "sonar-project.properties" file!');
 
       assert.isFalse(subScript.called);
       assert.isFalse(shellCommand.called);
@@ -483,7 +486,7 @@ error: Script "sonar" failed after 0 s with: ENOENT: no such file or directory, 
       const loggerRecorder = new LoggerRecorder();
       const sonarScript = getSonarScript(null, loggerRecorder.logger);
 
-      await shouldFail(() => sonarScript.run(), err => err.message === '"sonar.projectKey" property must be defined in "sonar-project.properties" file!');
+      await expect(sonarScript.run()).rejects.toThrow('"sonar.projectKey" property must be defined in "sonar-project.properties" file!');
 
       assert.isFalse(subScript.called);
       assert.isFalse(shellCommand.called);
