@@ -17,7 +17,7 @@ export class ShowCoverageScript extends ScriptBase<Options> {
   }
 
   protected get requiredDependencies(): string[] {
-    return ['nyc'];
+    return ['jest'];
   }
 
   protected async configure(command: caporal.Command): Promise<void> {

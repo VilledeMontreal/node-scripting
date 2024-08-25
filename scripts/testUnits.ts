@@ -32,9 +32,9 @@ export class TestUnitsScript extends ScriptBase<Options> {
   }
 
   protected get requiredDependencies(): string[] {
-    const deps = ['mocha'];
+    const deps = ['jest'];
     if (this.options.jenkins) {
-      deps.push('mocha-jenkins-reporter');
+      deps.push('jest-junit');
     }
     return deps;
   }
@@ -42,28 +42,8 @@ export class TestUnitsScript extends ScriptBase<Options> {
   protected async main() {
     const cmdArgs: string[] = [];
 
-    // if (await this.isProjectDirectDependency(`nyc`)) {
-    //   cmdArgs.push(path.join(configs.projectRoot, 'node_modules/nyc/bin/nyc'));
-    // } else {
-    //   this.logger.warn(
-    //     `The "nyc" direct dependency was not found in your project. The tests will be run using Mocha only!`
-    //   );
-    // }
-
-    // cmdArgs.push(path.join(configs.projectRoot, 'node_modules/mocha/bin/_mocha'));
     cmdArgs.push('--experimental-vm-modules');
-
     cmdArgs.push(path.join(configs.projectRoot, 'node_modules/jest/bin/jest'));
-
-    // ==========================================
-    // The test locations need to be quoted because
-    // they may contain a "**" wildcard that some
-    // shells may interpret differently otherwise!
-    //
-    // @see https://mochajs.org/#the-test-directory
-    // ==========================================
-    // cmdArgs.push(...this.addQuotes(TESTS_LOCATIONS));
-
     cmdArgs.push(`--ci`);
     cmdArgs.push(`--no-colors`);
     cmdArgs.push(`--runInBand`);
