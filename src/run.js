@@ -5,7 +5,7 @@ import _ from 'lodash-es';
 import { globalConstants } from '@villedemontreal/general-utils';
 import { createRequire } from 'module';
 
-import {fileURLToPath} from 'node:url';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,7 +31,7 @@ export const run = async function (params) {
     // Run the compilation
     // ==========================================
     const compileOptions = process.argv.filter((arg) =>
-      ['--nc', '-v', '--verbose', '--quiet', '--silent', '--no-color'].includes(arg)
+      ['--nc', '-v', '--verbose', '--quiet', '--silent', '--no-color'].includes(arg),
     );
     await caporal.run(['compile', ...compileOptions]);
 
@@ -102,7 +102,7 @@ function cleanParams(params) {
     const outDirRel = tsConfigObj?.compilerOptions?.outDir;
     if (outDirRel && !['.', './'].includes(outDirRel)) {
       outDir = path.normalize(
-        `${projectRoot}/${outDirRel.startsWith(`./`) ? outDirRel.substring(2) : outDirRel}`
+        `${projectRoot}/${outDirRel.startsWith(`./`) ? outDirRel.substring(2) : outDirRel}`,
       );
       deleteOutDirBeforeCompilation = true;
     }
@@ -127,7 +127,7 @@ function addCompileCommand(caporal, projectRoot, outDir, deleteOutDirBeforeCompi
     .command(
       'compile',
       `Compile/Transpile the project from Typescript to Javascript. 
-Note that this script is automatically executed first when calling most scripts, as long as the "--nc" argument is not specified!\n`
+Note that this script is automatically executed first when calling most scripts, as long as the "--nc" argument is not specified!\n`,
     )
     .alias('c')
     .action(async ({ logger, options }) => {
@@ -141,7 +141,7 @@ Note that this script is automatically executed first when calling most scripts,
           const isSilent = options.silent || options.quiet;
           execSync(
             `node ${projectRoot}/node_modules/typescript/lib/tsc.js --project ${projectRoot}`,
-            isSilent ? {} : { stdio: [0, 1, 2] }
+            isSilent ? {} : { stdio: [0, 1, 2] },
           );
           logger.info('Compilation done.\n');
         } catch (err) {
@@ -168,7 +168,7 @@ function addCustomGlobalOptions(caporal) {
       'or starts with "testing:" the variable is automatically set, you don\'t need to use this option.',
     {
       global: true,
-    }
+    },
   );
 }
 

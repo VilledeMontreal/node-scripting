@@ -1,10 +1,13 @@
 import caporal from '@caporal/core';
-import { globalConstants, utils } from '@villedemontreal/general-utils';
+import { globalConstants } from '@villedemontreal/general-utils';
 import { assert } from 'chai';
-import { execSync } from 'child_process';
+import { exec, execSync } from 'child_process';
 import fs from 'fs-extra';
 import path from 'path';
+import { promisify } from 'util';
 import { configs } from '../config/configs.js';
+
+const execAsync = promisify(exec);
 
 export function setTestingConfigs() {
   configs.setCaporal(caporal.program);
@@ -37,25 +40,14 @@ export async function run(...args: string[]) {
 }
 
 export async function runCore(runFilePath: string, ...args: string[]) {
-  let output = ``;
-  let isSuccess = true;
+  const env = { ...process.env };
+  const escapedArgs = args.map((x) => `"${x.replace('"', '"')}"`);
   try {
-    await utils.exec(runFilePath, args, {
-      outputHandler: (stdoutData: string, stderrData: string) => {
-        const newOut = `${stdoutData ? ' ' + stdoutData : ''} ${
-          stderrData ? ' ' + stderrData : ''
-        } `;
-        output += newOut;
-      },
-    });
-  } catch (err) {
-    isSuccess = false;
-    // we have the output
+    const result = await execAsync(`${runFilePath} ${escapedArgs.join(' ')}`, { env });
+    return { output: result.stdout, isSuccess: true };
+  } catch (err: any) {
+    return { output: err.stdout + err.stderr, isSuccess: false };
   }
-  return {
-    output,
-    isSuccess,
-  };
 }
 
 export function isMainHelpDisplayed(output: string) {
@@ -88,7 +80,7 @@ export async function withCustomRunFile(
 
     const { output, isSuccess } = await runCore(
       configs.isWindows ? 'runTesting.cmd' : './runTesting',
-      ...runArgs
+      ...runArgs,
     );
     return { output, isSuccess };
   } finally {
@@ -133,11 +125,11 @@ export function assertText(text: string, assertions: TextAssertion[]) {
   if (!text) {
     throw new Error('empty text');
   }
-  for (const assertion of assertions) {    
+  for (const assertion of assertions) {
     let isValid = false;
-    let values = typeof assertion.value === 'string' ? [assertion.value] : assertion.value;
+    const values = typeof assertion.value === 'string' ? [assertion.value] : assertion.value;
     for (const value of values) {
-      switch(assertion.kind) {
+      switch (assertion.kind) {
         case 'startsWith':
           isValid = text.startsWith(value);
           break;
@@ -161,7 +153,9 @@ export function assertText(text: string, assertions: TextAssertion[]) {
       isValid = !isValid;
     }
     if (!isValid) {
-      throw new Error(`Text assertion failed: kind=${assertion.kind} ${assertion.invert ? 'inverted' : ''}\nExpected:\n${assertion.value}\nText:\n${text}`);
+      throw new Error(
+        `Text assertion failed: kind=${assertion.kind} ${assertion.invert ? 'inverted' : ''}\nExpected:\n${assertion.value}\nText:\n${text}`,
+      );
     }
   }
 }

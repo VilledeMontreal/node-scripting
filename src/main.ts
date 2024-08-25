@@ -34,7 +34,7 @@ export async function main(caporal: Program, projectScriptsIndexModule: string, 
       console.error(
         `${chalk.redBright('error')}: ${
           err.message ? err.message : JSON.stringify(err, Object.getOwnPropertyNames(err))
-        }\n`
+        }\n`,
       );
     }
 
@@ -101,8 +101,9 @@ function patchHelpCommand(caporal: Program, helpCommand: Command) {
       caporal.addListener('help', onHelp);
       try {
         result = await oldAction(actionParams);
-      } catch (err) {
+      } catch (err: any) {
         caporal.removeListener('help', onHelp);
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
         reject(err);
       }
     });
@@ -114,7 +115,7 @@ async function printHelpOnCaporalError(
   caporal: Program,
   err: any,
   argv: string[],
-  executedCommand: Command
+  executedCommand: Command,
 ): Promise<void> {
   if (argv.includes(`--silent`) || argv.includes(`--quiet`)) {
     return;
@@ -143,7 +144,7 @@ async function printHelpOnCaporalError(
 
 async function executeHelp(caporal: Program, argv: string[], command?: string) {
   const helpOptions = argv.filter((arg) =>
-    ['-v', '--verbose', '--quiet', '--silent', '--color'].includes(arg)
+    ['-v', '--verbose', '--quiet', '--silent', '--color'].includes(arg),
   );
   const args = ['help'];
   if (command) {
@@ -156,7 +157,7 @@ async function executeHelp(caporal: Program, argv: string[], command?: string) {
 
 async function addProjectScripts(
   caporal: Program,
-  scriptsIndexModule: string
+  scriptsIndexModule: string,
 ): Promise<Set<string>> {
   const scriptsNames: Set<string> = new Set();
 

@@ -27,7 +27,7 @@ export class TestScript extends ScriptBase<Options> {
       {
         default: `output/test-results/report.xml`,
         validator: caporal.program.STRING,
-      }
+      },
     );
   }
 

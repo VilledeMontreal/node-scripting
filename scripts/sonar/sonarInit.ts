@@ -38,14 +38,14 @@ export class SonarInitScript extends SonarBaseScript<IGlobalOptions> {
   private logSonarInitSuccess(sonarProjectKey: string, sonarHostUrl: string) {
     const sonarProjectUrl = this.buildSonarProjectUrl(sonarProjectKey, sonarHostUrl);
     this.logger.info(
-      `'${sonarProjectKey}' Sonar project successfully initialized, and available at ${sonarProjectUrl}`
+      `'${sonarProjectKey}' Sonar project successfully initialized, and available at ${sonarProjectUrl}`,
     );
   }
 
   private logSonarInitSkip(sonarProjectKey: string, sonarHostUrl: string) {
     const sonarProjectUrl = this.buildSonarProjectUrl(sonarProjectKey, sonarHostUrl);
     this.logger.warn(
-      `'${sonarProjectKey}' Sonar project already exists at ${sonarProjectUrl} ! Skipping sonar initialization...`
+      `'${sonarProjectKey}' Sonar project already exists at ${sonarProjectUrl} ! Skipping sonar initialization...`,
     );
   }
 

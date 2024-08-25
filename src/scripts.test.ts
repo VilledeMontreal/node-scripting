@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-
 import caporal from '@caporal/core';
 import { globalConstants, utils } from '@villedemontreal/general-utils';
 import { assert } from 'chai';
@@ -18,14 +16,12 @@ import {
 } from './utils/testingUtils.js';
 
 describe(`Scripts tests`, function () {
-
   beforeAll(() => {
     setTestingConfigs();
   });
 
   describe(`Compilation`, () => {
     it(`Default`, async function () {
-
       const distDir = configs.projectOutDir;
       assert.isDefined(distDir, 'Expected to have a valid projectOutDir');
 
@@ -250,7 +246,7 @@ describe(`Scripts tests`, function () {
         `--nc`,
         `--userName`,
         `Stromgol`,
-        `--help`
+        `--help`,
       );
       assert.isTrue(isSuccess);
 
@@ -297,7 +293,7 @@ describe(`Scripts tests`, function () {
         `testing:testingScript`,
         `--nc`,
         `--port`,
-        `notANumber`
+        `notANumber`,
       );
       assert.isFalse(isSuccess);
 
@@ -311,7 +307,7 @@ describe(`Scripts tests`, function () {
         `testing:testingHiddenScript`,
         `--nc`,
         `--username`,
-        `Stromgol`
+        `Stromgol`,
       );
       assert.isTrue(isSuccess);
 
@@ -321,7 +317,7 @@ describe(`Scripts tests`, function () {
     it(`We can register a script without passing action parameters`, async () => {
       const prog = new caporal.Program();
       assert.isFalse(
-        caporal.program.getCommands().some((command) => command.name === 'testing:testingScript')
+        caporal.program.getCommands().some((command) => command.name === 'testing:testingScript'),
       );
 
       const script = new TestingScript(null as any); // no params!
@@ -350,7 +346,7 @@ describe(`Scripts tests`, function () {
             } `;
             output += newOut;
           },
-        }
+        },
       );
 
       assert.isTrue(output.indexOf(`Run the ESLint validation`) > -1);
@@ -379,7 +375,7 @@ describe(`Scripts tests`, function () {
               }
             };
           },
-        }
+        },
       );
 
       await new TestingScript({
@@ -419,7 +415,7 @@ describe(`Scripts tests`, function () {
     `,
         `testing:testingScriptGlobalCustomOptions1`,
         `--nc`,
-        `--custom`
+        `--custom`,
       );
 
       assert.isTrue(isSuccess);
@@ -433,7 +429,7 @@ describe(`Scripts tests`, function () {
         ``,
         `lint`,
         `--help`,
-        `--nc`
+        `--nc`,
       );
 
       assert.isTrue(isSuccess);
@@ -446,7 +442,7 @@ describe(`Scripts tests`, function () {
       assert.isTrue(isSuccess);
 
       assert.isTrue(
-        output.indexOf(`This script requires some dependencies that are not direct`) > -1
+        output.indexOf(`This script requires some dependencies that are not direct`) > -1,
       );
       assert.isTrue(output.indexOf(`- _missingDependency`) > -1);
 
@@ -461,7 +457,7 @@ describe(`Scripts tests`, function () {
         `testing:testingCallingScript`,
         `--nc`,
         `--foo`,
-        `55`
+        `55`,
       );
       assert.isTrue(isSuccess);
 
@@ -488,7 +484,7 @@ info: Script "testing:testingCallingScript" successful`;
         `--bar`,
         `someName`,
         `--delay`,
-        `100`
+        `100`,
       );
       assert.isTrue(isSuccess);
 
@@ -515,7 +511,7 @@ info: Script "testing:testingCallingScript" successful`;
         `--bar`,
         `someName`,
         `--delay`,
-        `100`
+        `100`,
       );
       assert.isTrue(isSuccess);
 
@@ -543,7 +539,7 @@ info: Script "testing:testingCallingScript" successful`;
         `--bar`,
         `someName`,
         `--delay`,
-        `100`
+        `100`,
       );
       assert.isTrue(isSuccess);
 
@@ -570,7 +566,7 @@ info: Script "testing:testingCallingScript" successful`;
         `someName`,
         `--delay`,
         `100`,
-        `--throwError`
+        `--throwError`,
       );
       assert.isFalse(isSuccess);
 
@@ -613,10 +609,10 @@ info: Script "testing:testingCallingScript" successful`;
 
     it(`non test script -> not set to "tests"`, async () => {
       delete process.env[globalConstants.envVariables.NODE_APP_INSTANCE];
+      process.env.FOOBAR = 'zorg';
 
       const { output, isSuccess } = await withLogNodeInstance(`lint`, `--nc`);
       assert.isTrue(isSuccess);
-
       assert.isTrue(output.indexOf(`MAIN NODE_APP_INSTANCE: undefined`) > -1);
     });
 
@@ -650,7 +646,7 @@ error: Script "sonar-init" failed after 0 s with: ENOENT: no such file or direct
       beforeAll(async () => {
         await fs.copyFile(
           './src/utils/test-sonar-project_url-with-trailing-slash.properties',
-          './sonar-project.properties'
+          './sonar-project.properties',
         );
       });
       afterAll(async () => {
@@ -677,7 +673,7 @@ error: Script "sonar-init" failed after 0 s with: ENOENT: no such file or direct
 
         assert.isTrue(
           nock.isDone(),
-          `There are remaining expected HTTP calls: ${nock.pendingMocks().toString()}`
+          `There are remaining expected HTTP calls: ${nock.pendingMocks().toString()}`,
         );
 
         assert.isTrue(isSuccess);

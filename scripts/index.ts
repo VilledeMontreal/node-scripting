@@ -14,4 +14,3 @@ export { TestingScriptGlobalCustomOptions1 } from './testing/testingScriptCustom
 export { TestingScriptGlobalCustomOptions2 } from './testing/testingScriptCustomGlobalOptions2.js';
 export { TestingScriptWithArgs } from './testing/testingScriptWithArgs.js';
 export { WatchScript } from './watch.js';
-

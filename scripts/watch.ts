@@ -10,7 +10,6 @@ import { ScriptBase } from '../src/index.js';
 
 const require = createRequire(import.meta.url);
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -44,7 +43,7 @@ that point since the incremental compilation is already done by this script.`;
     this.logger.info(
       `\n==========================================\n` +
         `Starting incremental compilation...\n` +
-        `==========================================\n`
+        `==========================================\n`,
     );
     const projectName = require(path.join(configs.projectRoot, '/package.json')).namae;
     let ignoreNextCompilationComplete = false;
@@ -75,7 +74,9 @@ that point since the incremental compilation is already done by this script.`;
             notifier.notify({
               title: projectName,
               message: 'incremental compilation done',
-              icon: path.normalize(path.join(__dirname, '../../../assets/notifications/success.png')),
+              icon: path.normalize(
+                path.join(__dirname, '../../../assets/notifications/success.png'),
+              ),
               sound: false,
             });
           }
@@ -88,7 +89,6 @@ that point since the incremental compilation is already done by this script.`;
       }
     };
 
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
         await this.invokeShellCommand(
@@ -102,7 +102,7 @@ that point since the incremental compilation is already done by this script.`;
           ],
           {
             outputHandler,
-          }
+          },
         );
       } catch (err) {
         // ==========================================

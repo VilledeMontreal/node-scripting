@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable no-console */
-/* eslint-disable max-lines-per-function */
+
 /* eslint-disable prettier/prettier */
 import { assert, should } from 'chai';
 // import fs from 'fs-extra';
@@ -22,14 +19,14 @@ should();
 
 const sandbox = sinon.createSandbox();
 
-function getSonarInitScript(logger: {}): SonarInitScript {
+function getSonarInitScript(logger: any): SonarInitScript {
   return new SonarInitScript({
     args: {},
     options: {},
     program: sinon.stub() as any,
     command: sinon.stub() as any,
     ddash: sinon.stub() as any,
-    logger: logger as any,
+    logger,
   });
 }
 
@@ -59,7 +56,7 @@ describe('sonar-init script', function () {
   });
 
   validPropertyFiles.forEach((propertyFile) => {
-    // eslint-disable-next-line @typescript-eslint/require-await
+     
     describe(` when using "${propertyFile}" valid property file`, () => {
       beforeAll(async () => {
         await fs.copyFile(propertyFile, './sonar-project.properties');

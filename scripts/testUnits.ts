@@ -27,7 +27,7 @@ export class TestUnitsScript extends ScriptBase<Options> {
       {
         default: `output/test-results/report.xml`,
         validator: caporal.program.STRING,
-      }
+      },
     );
   }
 
@@ -52,7 +52,7 @@ export class TestUnitsScript extends ScriptBase<Options> {
 
     // cmdArgs.push(path.join(configs.projectRoot, 'node_modules/mocha/bin/_mocha'));
     cmdArgs.push('--experimental-vm-modules');
-    
+
     cmdArgs.push(path.join(configs.projectRoot, 'node_modules/jest/bin/jest'));
 
     // ==========================================
@@ -105,7 +105,7 @@ export class TestUnitsScript extends ScriptBase<Options> {
       });
 
       this.logger.info(
-        "   \u21b3  type 'run show-coverage' (or './run show-coverage' on Linux/Mac) to display the HTML report"
+        "   \u21b3  type 'run show-coverage' (or './run show-coverage' on Linux/Mac) to display the HTML report",
       );
     } catch (err) {
       throw new Error('Some unit tests failed');

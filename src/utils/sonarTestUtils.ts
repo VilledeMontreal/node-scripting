@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import nock from 'nock';
 import stripAnsi from 'strip-ansi';
 
@@ -29,7 +28,7 @@ export function simulateSonarProjectAlreadyExists() {
 }
 
 export class LoggerRecorder {
-  logger: {};
+  logger: any;
   recordedLogs: string;
 
   constructor() {
@@ -45,7 +44,7 @@ export class LoggerRecorder {
             that.recordedLogs += stripAnsi(`${prop.toString()}: ${arguments[0]}\n`);
           };
         },
-      }
+      },
     );
   }
 }

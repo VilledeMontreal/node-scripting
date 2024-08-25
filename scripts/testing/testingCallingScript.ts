@@ -34,7 +34,7 @@ export class TestingCallingScript extends ScriptBase<Options> {
     command.option(`--throwError`, `Throw an error`);
     command.option(
       `--forceVerboseToFalse`,
-      `Force --verbose to false when calling another script.`
+      `Force --verbose to false when calling another script.`,
     );
   }
 
@@ -47,7 +47,7 @@ export class TestingCallingScript extends ScriptBase<Options> {
         throwError: this.options.throwError,
         ...(this.options.forceVerboseToFalse ? { verbose: false } : {}),
       },
-      { name: this.options.bar ?? 'MyService' }
+      { name: this.options.bar ?? 'MyService' },
     );
     await this.invokeScript(TestingExampleScript, { lucky: this.options.foo }, {});
   }
