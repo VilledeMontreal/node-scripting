@@ -256,7 +256,7 @@ export abstract class ScriptBase<
     const commandOptionsnames = this.getCommandOptionsNames();
     for (const [key, val] of Object.entries(this.options)) {
       if (!commandOptionsnames.has(key)) {
-        currentGlobalOptions[key] = val;
+        (currentGlobalOptions as any)[key] = val;
       }
     }
 

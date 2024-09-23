@@ -7,8 +7,6 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "newLine": "LF",
-    "charset": "utf8",
-    "suppressImplicitAnyIndexErrors": true,
     "alwaysStrict": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
