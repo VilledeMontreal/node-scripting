@@ -1,3 +1,7 @@
+**WARNING!!!!**
+
+This repository has been transferred here: https://github.com/VilledeMontreal/node-core-libs/tree/main/packages/node-scripting
+
 # Librairie pour la création et utilisation de scripts dans un projet Node.js
 
 Cette librairie, basée sur [Caporal](https://caporal.io/), offre une manière standardisée de créer et de lancer des scripts
